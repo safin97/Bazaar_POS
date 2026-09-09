@@ -131,6 +131,83 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
           ),
         ),
       ),
+      const SizedBox(height: 20),
+      Card(
+        key: const ValueKey('about-us-table'),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.tr('aboutUs'),
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Table(
+                columnWidths: const {
+                  0: FlexColumnWidth(2),
+                  1: FlexColumnWidth(3),
+                },
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                border: TableBorder(
+                  horizontalInside: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                  ),
+                ),
+                children:
+                    [
+                          (context.tr('aboutAppName'), 'Bazaar POS'),
+                          (
+                            context.tr('storeName'),
+                            context.store.settings.name,
+                          ),
+                          (
+                            context.tr('aboutPurpose'),
+                            context.tr('aboutPurposeValue'),
+                          ),
+                          (context.tr('installedVersion'), appVersion),
+                          (
+                            context.tr('language'),
+                            'English · العربية · کوردی بادینی',
+                          ),
+                          (
+                            context.tr('aboutStorage'),
+                            context.tr('aboutStorageValue'),
+                          ),
+                        ]
+                        .map(
+                          (row) => TableRow(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(
+                                  0,
+                                  12,
+                                  12,
+                                  12,
+                                ),
+                                child: Text(
+                                  row.$1,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                child: Text(row.$2),
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
     ],
   );
 }

@@ -138,6 +138,20 @@ final Map<String, List<String>> translations = {
     "رمز منتج مخصص",
     "هێمایێ تایبەت یێ بەرهەمی",
   ],
+  "aboutUs": ["About us", "من نحن", "دەربارەی مە"],
+  "aboutAppName": ["App name", "اسم التطبيق", "ناڤێ ئەپێ"],
+  "aboutPurpose": ["What we do", "ماذا نقدم", "ئەو کارێ ئەم دکەین"],
+  "aboutPurposeValue": [
+    "Supermarket checkout, inventory, staff access and sales reporting.",
+    "نقاط بيع السوبرماركت والمخزون وصلاحيات الموظفين وتقارير المبيعات.",
+    "فرۆتنا مارکێتێ، کۆگە، دەستهەلاتێن کارمەندان و ڕاپۆرتێن فرۆتنێ.",
+  ],
+  "aboutStorage": ["Data storage", "تخزين البيانات", "پاشەکەوتکرنا داتایان"],
+  "aboutStorageValue": [
+    "Offline on this device. Each device operates independently.",
+    "محليًا على هذا الجهاز دون اتصال. يعمل كل جهاز بشكل مستقل.",
+    "بێ ئینتەرنێت ل ڤی ئامێری. هەر ئامێرەک ب سەربەخۆیی کار دکەت.",
+  ],
   "panelSettings": ["Panel settings", "إعدادات اللوحة", "ڕێکخستنێن پانێلێ"],
   "panelSettingsHint": [
     "Language and app updates for this device.",
