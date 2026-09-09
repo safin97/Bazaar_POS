@@ -193,6 +193,7 @@ class StoreSettings {
     this.address = '',
     this.phone = '',
     this.currency = 'IQD',
+    this.usdToIqdRate,
     this.taxBasisPoints = 0,
     this.receiptHeader = '',
     this.receiptFooter = 'Thank you for shopping with us!',
@@ -208,6 +209,30 @@ class StoreSettings {
       receiptHeader,
       receiptFooter;
   final int taxBasisPoints, receiptWidth;
+  /// Display-only rate: IQD hundredths for 1 USD (131000 means 1 USD = 1310 IQD).
+  /// Null keeps the market in single-currency display mode.
+  final int? usdToIqdRate;
+  bool get hasValidCurrencyDisplay =>
+      usdToIqdRate == null ||
+      (['USD', 'IQD'].contains(currency) &&
+          usdToIqdRate! > 0 &&
+          usdToIqdRate! <= 999999999999);
+  String? get secondaryCurrency =>
+      usdToIqdRate != null && hasValidCurrencyDisplay
+      ? (currency == 'USD' ? 'IQD' : 'USD')
+      : null;
+
+  int? secondaryAmount(int amount) {
+    if (secondaryCurrency == null) return null;
+    // Use integer arithmetic on native and web; round the displayed total once.
+    final rate = BigInt.from(usdToIqdRate!);
+    final hundred = BigInt.from(100);
+    final numerator = BigInt.from(amount).abs() *
+        (currency == 'USD' ? rate : hundred);
+    final denominator = currency == 'USD' ? hundred : rate;
+    final rounded = (numerator + denominator ~/ BigInt.two) ~/ denominator;
+    return (amount < 0 ? -rounded : rounded).toInt();
+  }
   final bool showCashier;
   final String? logo;
   Uint8List? get logoBytes => logo == null ? null : base64Decode(logo!);
@@ -217,6 +242,7 @@ class StoreSettings {
     'address': address,
     'phone': phone,
     'currency': currency,
+    'usdToIqdRate': usdToIqdRate,
     'taxBasisPoints': taxBasisPoints,
     'receiptHeader': receiptHeader,
     'receiptFooter': receiptFooter,
@@ -230,6 +256,7 @@ class StoreSettings {
     address: j['address'],
     phone: j['phone'],
     currency: j['currency'],
+    usdToIqdRate: j['usdToIqdRate'],
     taxBasisPoints: j['taxBasisPoints'],
     receiptHeader: j['receiptHeader'],
     receiptFooter: j['receiptFooter'],

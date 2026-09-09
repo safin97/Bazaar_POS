@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# flutter-pos
-to market
-=======
 # Bazaar POS
 
 A Flutter supermarket point of sale for **iOS, Android, macOS and Windows**, with an additional **localhost browser preview**. Each installation has independent offline data.
@@ -144,10 +140,61 @@ The default app logo and launcher icons use the colorful shopping cart image sup
 
 The welcome screen background uses the store owner's supplied `empty-cashier-work-place.jpg`, resized and bundled as `assets/branding/welcome-background.jpg` for offline use.
 
-Panel settings is available to signed-in staff for device language and app updates.
-For web releases, run `bash tool/build_web.sh` (also used by `tool/serve.sh`).
-It embeds a build ID and publishes `app-update.json`; Check for updates compares
-that manifest on the same server, then offers a confirmed reload. Saved local data
-is retained. Finish sales and save edits before reloading. Native apps currently
-require installing a new release manually; no native update server is configured.
->>>>>>> 4eac19c (Initial Flutter POS project)
+## GitHub updates
+
+Open **Panel settings → App updates → Check GitHub for updates**. The app checks
+`safin97/flutter-pos` for the latest published stable GitHub release, compares it
+with the running app version, and shows the release notes. **Download update**
+opens the matching package in the device's browser. Open the downloaded installer
+to finish updating; downloading alone does not replace the running app. Finish
+sales and save edits before installing or reloading. The updater does not change
+market data or run Git commands.
+
+The update API uses public releases without an embedded token. A private
+repository or a repository with no published release displays a clear message;
+**GitHub releases** still opens the repository in your browser, where you can
+sign in if needed. For private source code, publish your distributable packages
+to a separate public release repository and build with
+`--dart-define=GITHUB_REPOSITORY=owner/release-repository`. Never embed a GitHub
+access token in the client app.
+
+To publish an update:
+
+1. Increase `version:` in `pubspec.yaml`, for example to `1.0.2+3`. Keep the
+   development defaults in `lib/core/updates/app_updates.dart` in sync (a test
+   catches mismatches). Native builds read their installed package version;
+   `tool/build_web.sh` embeds the version from `pubspec.yaml` into the web code.
+2. Build and test the release for your target devices using the build commands
+   above. Native installers need the same application identity and signing key
+   as the installed app for an in-place upgrade. Package desktop applications
+   with their complete runtime files. Use the exact asset names below; each
+   package must support the architectures used by your store's devices.
+3. Create a **published, non-prerelease GitHub release** tagged `v1.0.2+3` (or
+   `v1.0.2`) and attach the packages. Add installation instructions to its notes.
+   Numeric `+build` tags also support an update to the same version with a higher
+   build number. An ordinary Git push or tag without a published release does
+   not create an app update.
+
+| Device | Recognized GitHub release asset names, in preference order |
+| --- | --- |
+| Android | `bazaar-pos-android.apk` |
+| macOS | `bazaar-pos-macos.dmg`, `bazaar-pos-macos.zip` |
+| Windows | `bazaar-pos-windows.exe`, `bazaar-pos-windows.msix`, `bazaar-pos-windows.zip` |
+| Linux (if you add a Linux build target) | `bazaar-pos-linux.AppImage`, `bazaar-pos-linux.tar.gz` |
+| Browser | `bazaar-pos-web.zip` |
+| iOS | Release notes link to your signed App Store/TestFlight distribution |
+
+If there is no matching package, the app offers the release page and installation
+instructions. Source archives are not offered as app installers.
+
+For a web release, run `bash tool/build_web.sh` (also used by `tool/serve.sh`),
+then ZIP the **contents** of `build/web` as `bazaar-pos-web.zip`. The script embeds
+a build ID and includes `app-update.json`. The store owner installs the downloaded
+web package on the existing server; **Check this server → Load update** then
+confirms a reload. A browser cannot replace the files on its host server. Keep
+the same address, port, and browser profile so saved market data remains available.
+The build script accepts Flutter build arguments, including `--base-href` and the
+repository override above. No release is published automatically by these scripts.
+
+Updater regression checks: `flutter test test/github_updates_test.dart test/panel_updates_test.dart`.
+The GitHub request format follows the [GitHub Releases API](https://docs.github.com/en/rest/releases/releases#get-the-latest-release).

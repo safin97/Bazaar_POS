@@ -434,14 +434,29 @@ class PosStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  String createMarket({required String name, required String currency}) {
+  String createMarket({
+    required String name,
+    required String currency,
+    String? logo,
+    int? usdToIqdRate,
+  }) {
     _require(owner: true);
     if (name.trim().isEmpty || !['IQD', 'USD', 'EUR'].contains(currency)) {
       throw const PosException('invalidMarket');
     }
+    _validatePhoto(logo);
+    final settings = StoreSettings(
+      name: name.trim(),
+      currency: currency,
+      logo: logo,
+      usdToIqdRate: usdToIqdRate,
+    );
+    if (!settings.hasValidCurrencyDisplay) {
+      throw const PosException('invalidExchangeRate');
+    }
     final market = Market(
       id: newId(),
-      settings: StoreSettings(name: name.trim(), currency: currency),
+      settings: settings,
     );
     _transaction('marketAdded', market.settings.name, () {
       _put('markets', market.id, market.toJson());
@@ -654,6 +669,9 @@ class PosStore extends ChangeNotifier {
 
   void saveSettings(StoreSettings value) {
     _require(manager: true);
+    if (!value.hasValidCurrencyDisplay) {
+      throw const PosException('invalidExchangeRate');
+    }
     if (value.name.trim().isEmpty ||
         value.taxBasisPoints < 0 ||
         value.taxBasisPoints > 10000 ||

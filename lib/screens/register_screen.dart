@@ -313,6 +313,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Divider(),
                 ),
                 _totalRow('total', subtotal + tax, bold: true),
+                if (secondaryMoney(subtotal + tax, store.settings) case final reference?) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    '$reference · ${context.tr('displayOnly')}',
+                    style: const TextStyle(color: muted, fontSize: 11),
+                    textAlign: TextAlign.end,
+                  ),
+                ],
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
@@ -585,7 +593,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: count,
-                                        mainAxisExtent: 218,
+                                        mainAxisExtent:
+                                            store.settings.secondaryCurrency == null
+                                            ? 218
+                                            : 238,
                                         crossAxisSpacing: 14,
                                         mainAxisSpacing: 14,
                                       ),
@@ -742,6 +753,15 @@ class _ProductCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 5),
+              if (secondaryMoney(p.price, context.store.settings) case final reference?) ...[
+                Text(
+                  reference,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 10, color: muted),
+                ),
+                const SizedBox(height: 5),
+              ],
               Text(
                 p.stock == 0
                     ? context.tr('outOfStock')
@@ -847,6 +867,18 @@ class _PaymentDialogState extends State<_PaymentDialog> {
                 color: forest,
               ),
             ),
+            if (secondaryMoney(_total, context.store.settings) case final reference?) ...[
+              const SizedBox(height: 6),
+              Text(
+                '$reference · ${context.tr('displayOnly')}',
+                style: const TextStyle(fontSize: 16, color: muted),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '${context.tr('paymentsInMainCurrency')}: ${context.store.settings.currency}',
+                style: const TextStyle(fontSize: 12, color: muted),
+              ),
+            ],
             const SizedBox(height: 4),
             Text(
               '${context.tr('tax')}: ${money(_tax, context.store.settings.currency)}',

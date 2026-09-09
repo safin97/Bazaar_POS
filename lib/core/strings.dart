@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../data/pos_store.dart';
+import '../data/models.dart';
 
 class PosScope extends InheritedNotifier<PosStore> {
   const PosScope({super.key, required PosStore store, required super.child})
@@ -28,6 +29,14 @@ String translate(String language, String key) {
 String money(int value, String currency) => currency == 'USD'
     ? '\$${NumberFormat('#,##0.00', 'en').format(value / 100)} USD'
     : '${NumberFormat(value % 100 == 0 ? '#,##0' : '#,##0.00', 'en').format(value / 100)} $currency';
+
+String? secondaryMoney(int value, StoreSettings settings) {
+  final amount = settings.secondaryAmount(value);
+  return amount == null ? null : '≈ ${money(amount, settings.secondaryCurrency!)}';
+}
+
+String displayExchangeRate(StoreSettings settings) =>
+    '1 USD = ${money(settings.usdToIqdRate!, 'IQD')}';
 int? parseMoney(String value) {
   final normalized = value.trim().replaceAll('٫', '.').replaceAllMapped(
     RegExp('[٠-٩۰-۹]'),
@@ -165,15 +174,85 @@ final Map<String, List<String>> translations = {
     "وەشانێ دامەزراندی",
   ],
   "appBuild": ["Build", "البناء", "بنیات"],
+  "updateSource": ["Update source", "مصدر التحديث", "ژێدەرێ نویکرنێ"],
+  "checkGitHubUpdates": [
+    "Check GitHub for updates",
+    "التحقق من تحديثات GitHub",
+    "ل نویکرنان ل GitHub بگەڕە",
+  ],
+  "downloadUpdate": ["Download update", "تنزيل التحديث", "نویکرنێ دابگرە"],
+  "githubReleases": ["GitHub releases", "إصدارات GitHub", "وەشانێن GitHub"],
+  "latestVersion": ["Latest version", "أحدث إصدار", "نووترین وەشان"],
+  "releaseNotes": ["What's new", "ما الجديد", "چی نوی یە"],
+  "githubNativeUpdateHint": [
+    "Download the latest installer from GitHub, then open it to update this app. Finish current sales and save edits before installing.",
+    "نزّل أحدث ملف تثبيت من GitHub ثم افتحه لتحديث التطبيق. أكمل المبيعات الحالية واحفظ تعديلاتك قبل التثبيت.",
+    "نووترین فایلێ دامەزراندنێ ژ GitHub دابگرە و ڤەکە دا ئەپێ نوی بکەی. بەری دامەزراندنێ فرۆتنان تمام بکە و گوهۆڕینان پاشەکەوت بکە.",
+  ],
+  "githubWebUpdateHint": [
+    "Get the latest web update from GitHub. The store owner must install it on this server before you can reload it below. Keep the same browser address to retain saved market data.",
+    "احصل على أحدث تحديث للويب من GitHub. يجب على صاحب المتجر تثبيته على هذا الخادم قبل إعادة تحميله أدناه. استخدم عنوان المتصفح نفسه للاحتفاظ ببيانات السوق المحفوظة.",
+    "نووترین نویکرنا وێبێ ژ GitHub دابگرە. خاوەنێ مارکێتێ پێدڤیە ل ڤی سێرڤەری دامەزرینیت، پاشی ل خوارێ دوبارە بار بکە. هەمان ناڤنیشانێ وێبێ بکار بینە دا داتایێن پاشەکەوتکری بمینن.",
+  ],
+  "githubUpdateAvailable": [
+    "A newer version is available on GitHub.",
+    "يتوفر إصدار أحدث على GitHub.",
+    "وەشانەکا نوی ل GitHub بەردەستە.",
+  ],
+  "githubUpToDate": [
+    "Your app is up to date with the latest GitHub release.",
+    "تطبيقك محدّث إلى أحدث إصدار على GitHub.",
+    "ئەپا تە ب نووترین وەشانێ GitHub هاتیە نویکرن.",
+  ],
+  "noGitHubRelease": [
+    "No public release is available. The repository may be private or may not have a published release yet.",
+    "لا يتوفر إصدار عام. قد يكون المستودع خاصًا أو لم يُنشر فيه إصدار بعد.",
+    "وەشانەکا گشتی بەردەست نینە. ڕەنگە کۆگە تایبەت بیت یان هێشتا وەشانەک نەهاتیە بەلاڤکرن.",
+  ],
+  "githubRateLimited": [
+    "GitHub could not allow this check. Wait a few minutes and try again, or open GitHub releases.",
+    "لم يسمح GitHub بهذا التحقق. انتظر بضع دقائق وحاول مجددًا أو افتح إصدارات GitHub.",
+    "GitHub ڕێک نەدا ڤێ گەڕیانێ. چەند خولەکان چاڤەڕێ بکە و دوبارە تاقی بکە یان وەشانێن GitHub ڤەکە.",
+  ],
+  "githubCheckFailed": [
+    "Could not reach GitHub. Check your internet connection and try again.",
+    "تعذر الاتصال بـ GitHub. تحقق من اتصال الإنترنت وحاول مجددًا.",
+    "پەیوەندی ب GitHub نەسەرکەفت. پەیوەندیا ئینتەرنێتێ بپشکنە و دوبارە تاقی بکە.",
+  ],
+  "invalidGitHubRelease": [
+    "This release has invalid update information. Open GitHub releases for details.",
+    "يحتوي هذا الإصدار على معلومات تحديث غير صالحة. افتح إصدارات GitHub للتفاصيل.",
+    "پێزانینێن نویکرنا ڤی وەشانی نەدروستن. بۆ وردەکاریان وەشانێن GitHub ڤەکە.",
+  ],
+  "invalidGitHubRepository": [
+    "The update repository is not configured correctly.",
+    "لم تتم تهيئة مستودع التحديث بشكل صحيح.",
+    "کۆگەها نویکرنێ ب دروستی نەهاتیە ڕێکخستن.",
+  ],
+  "installedVersionFailed": [
+    "Could not read the installed version. Try checking again or restart the app.",
+    "تعذرت قراءة الإصدار المثبت. حاول التحقق مجددًا أو أعد تشغيل التطبيق.",
+    "خواندنا وەشانێ دامەزراندی نەسەرکەفت. دوبارە بپشکنە یان ئەپێ دوبارە ڤەکە.",
+  ],
+  "githubNoInstallerHint": [
+    "This release has no direct download for this device. Open GitHub releases for installation instructions.",
+    "لا يحتوي هذا الإصدار على تنزيل مباشر لهذا الجهاز. افتح إصدارات GitHub للاطلاع على تعليمات التثبيت.",
+    "ئەڤ وەشانە داگرتنا ڕاستەوخۆ بۆ ڤی ئامێری نینە. بۆ ڕێنمایێن دامەزراندنێ وەشانێن GitHub ڤەکە.",
+  ],
+  "githubOpenFailed": [
+    "Could not open the browser. Allow pop-ups or copy this link into your browser.",
+    "تعذر فتح المتصفح. اسمح بالنوافذ المنبثقة أو انسخ هذا الرابط إلى متصفحك.",
+    "ڤەکرنا وێبگەڕێ نەسەرکەفت. ڕێکێ بدە پەنجەرەیێن نوی یان ڤی بەستەری کۆپی بکە د وێبگەڕێ خۆ دا.",
+  ],
+  "checkWebUpdates": [
+    "Check this server",
+    "التحقق من هذا الخادم",
+    "ڤی سێرڤەری بپشکنە",
+  ],
   "webUpdateHint": [
     "Check this server for a newer app build. Saved market data stays on this device.",
     "تحقق من وجود نسخة أحدث على هذا الخادم. تبقى بيانات السوق المحفوظة على هذا الجهاز.",
     "ل ڤی سێرڤەری ل وەشانەکا نوی بگەڕە. داتایێن مارکێتێ ل ڤی ئامێری دمینن.",
-  ],
-  "nativeUpdateHint": [
-    "Automatic updates are not configured for this device. Install the next release from your app provider.",
-    "التحديث التلقائي غير مُعد لهذا الجهاز. ثبّت الإصدار التالي من مزوّد التطبيق.",
-    "نویکرنا ئۆتۆماتیکی بۆ ڤی ئامێری نەهاتیە ڕێکخستن. وەشانێ داهاتی ژ دابینکەرێ ئەپێ دامەزرینە.",
   ],
   "checkUpdates": [
     "Check for updates",
@@ -293,10 +372,47 @@ final Map<String, List<String>> translations = {
   "addMarket": ["Add market", "إضافة متجر", "مارکێتەکێ زێدە بکە"],
   "manageMarket": ["Manage market", "إدارة المتجر", "مارکێتی بەڕێڤە ببە"],
   "currentMarket": ["Current market", "المتجر الحالي", "مارکێتا نوکە"],
+  "mainCurrency": ["Main currency", "العملة الأساسية", "دراڤێ سەرەکی"],
+  "displayBothCurrencies": [
+    "Display USD and IQD",
+    "عرض الدولار والدينار معًا",
+    "دۆلار و دیناری پێکڤە پیشان بدە",
+  ],
+  "displayBothCurrenciesHint": [
+    "Optional for USD or IQD markets. Show a second price using your exchange rate.",
+    "اختياري للمتاجر بالدولار أو الدينار. اعرض سعرًا ثانيًا باستخدام سعر الصرف الذي تحدده.",
+    "هەلبژارتییە بۆ مارکێتێن دۆلار یان دیناری. نرخەکێ دوویێ ب نرخێ گوهۆڕینا خۆ پیشان بدە.",
+  ],
+  "usdIqdExchangeRate": [
+    "IQD for 1 USD",
+    "دينار عراقي مقابل دولار واحد",
+    "دینارێ عێراقی بۆ ١ دۆلار",
+  ],
+  "exchangeRateHint": [
+    "Enter your display rate. Update it in market Settings when needed; it is not fetched automatically.",
+    "أدخل سعر الصرف للعرض. حدّثه من إعدادات المتجر عند الحاجة؛ لا يتم جلبه تلقائيًا.",
+    "نرخێ گوهۆڕینێ بۆ پیشاندانێ بنڤیسە. دەمێ پێدڤی بیت ل ڕێکخستنێن مارکێتێ نوی بکە؛ ئۆتۆماتیکی ناهێتە وەرگرتن.",
+  ],
+  "invalidExchangeRate": [
+    "Enter a positive USD/IQD exchange rate with up to two decimal places.",
+    "أدخل سعر صرف موجبًا للدولار مقابل الدينار بمنزلتين عشريتين كحد أقصى.",
+    "نرخەکێ گوهۆڕینا دۆلار و دیناری یێ ژ سفرێ مەزن بنڤیسە، ب هەتا دوو ژماران پشتی خاڵێ.",
+  ],
+  "paymentsInMainCurrency": [
+    "Payments and change use",
+    "الدفع والباقي بالعملة",
+    "پارەدان و پاشماوە ب",
+  ],
+  "referenceTotal": ["Reference total", "الإجمالي التقريبي", "کۆما نزیکەیی"],
+  "displayOnly": [
+    "For display only",
+    "للعرض فقط",
+    "تەنێ بۆ پیشاندانێ",
+  ],
   "marketSetupHint": [
-    "Create a market, set its logo and receipt details in Settings, then add its admin, owner and sales staff in Team. Usernames must be unique across markets.",
-    "أنشئ متجراً واضبط شعاره وتفاصيل الإيصال في الإعدادات، ثم أضف المدير والمالك وموظفي البيع في الفريق. يجب أن تكون أسماء المستخدمين فريدة بين المتاجر.",
-    "مارکێتەکێ دروست بکە، ل رێکخستنان لوگۆ و وردەکاریێن پسوولێ دانە، پاشی بەڕێڤەبەر و خودان و فرۆشیاران زێدە بکە. ناڤێن بەکارهێنەران دڤێت جودا بن.",
+    "Add a market with its logo and currency preferences, then set receipt details in Settings and add staff in Team. Usernames must be unique across markets.",
+    "أضف متجرًا مع شعاره وتفضيلات العملة، ثم اضبط الإيصال في الإعدادات وأضف الموظفين في الفريق. يجب أن تكون أسماء المستخدمين فريدة بين المتاجر.",
+    "مارکێتەکێ ب لوگۆ و هەلبژاردنێن دراڤی زێدە بکە، پاشی ل ڕێکخستنان پسوولێ ڕێک بخە و ل تیمێ کارمەندان زێدە بکە. ناڤێن بەکارهێنەران دڤێت جودا بن.",
   ],
   "invalidMarket": [
     "Enter a market name and choose a currency.",

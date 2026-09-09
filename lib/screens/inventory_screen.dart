@@ -137,7 +137,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                '${money(p.price, store.settings.currency)} · ${p.stock} ${context.tr('inStock')}',
+                                [
+                                  '${money(p.price, store.settings.currency)} · ${p.stock} ${context.tr('inStock')}',
+                                  if (secondaryMoney(p.price, store.settings) case final reference?)
+                                    reference,
+                                ].join('\n'),
                                 style: const TextStyle(fontSize: 10),
                               ),
                               trailing: store.canManageCatalog
@@ -228,7 +232,11 @@ class _InventoryScreenState extends State<InventoryScreen> {
                                     ),
                                     DataCell(
                                       Text(
-                                        money(p.price, store.settings.currency),
+                                        [
+                                          money(p.price, store.settings.currency),
+                                          if (secondaryMoney(p.price, store.settings) case final reference?)
+                                            reference,
+                                        ].join('\n'),
                                         style: const TextStyle(fontSize: 11),
                                       ),
                                     ),

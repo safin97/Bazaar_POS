@@ -134,6 +134,14 @@ Future<Uint8List> receiptPdf(Sale sale) async {
             if (sale.discount > 0) row(t('discount'), '-${m(sale.discount)}'),
             row(t('tax'), m(sale.tax)),
             row(t('total'), m(sale.total), bold: true),
+            if (secondaryMoney(sale.total, s) case final reference?) ...[
+              row(t('referenceTotal'), reference),
+              pw.Text(
+                '${displayExchangeRate(s)} · ${t('displayOnly')}',
+                style: const pw.TextStyle(fontSize: 7),
+                textAlign: pw.TextAlign.center,
+              ),
+            ],
             pw.Divider(),
             row(t('payment'), t(sale.paymentMethod)),
             row(t('amountReceived'), m(sale.tendered)),
@@ -288,6 +296,14 @@ class ReceiptPaper extends StatelessWidget {
               if (sale.discount > 0) row('discount', '-${m(sale.discount)}'),
               row('tax', m(sale.tax)),
               row('total', m(sale.total), bold: true),
+              if (secondaryMoney(sale.total, s) case final reference?) ...[
+                row('referenceTotal', reference),
+                Text(
+                  '${displayExchangeRate(s)} · ${t('displayOnly')}',
+                  style: const TextStyle(fontSize: 10, color: muted),
+                  textAlign: TextAlign.center,
+                ),
+              ],
               const Divider(),
               row('payment', t(sale.paymentMethod)),
               row('amountReceived', m(sale.tendered)),

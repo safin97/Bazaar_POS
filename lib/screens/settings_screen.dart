@@ -4,6 +4,7 @@ import '../core/strings.dart';
 import '../core/theme.dart';
 import '../data/models.dart';
 import '../widgets/common.dart';
+import '../widgets/currency_display_fields.dart';
 import '../widgets/receipt.dart';
 import '../widgets/photo_picker.dart';
 
@@ -19,6 +20,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Map<String, TextEditingController> get _c => _controllers!;
   String? _logo;
   String _currency = 'IQD';
+  bool _displayBoth = false;
+  final _rate = TextEditingController();
   int _width = 80;
   bool _showCashier = true;
   @override
@@ -43,6 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
     _logo = s.logo;
     _currency = s.currency;
+    _displayBoth = s.secondaryCurrency != null;
+    _rate.text = s.usdToIqdRate == null
+        ? ''
+        : (s.usdToIqdRate! / 100).toStringAsFixed(2);
     _showCashier = s.showCashier;
     _width = s.receiptWidth;
   }
@@ -53,6 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     for (final c in _c.values) {
       c.dispose();
     }
+    _rate.dispose();
     super.dispose();
   }
 
@@ -62,6 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     address: _c['address']!.text.trim(),
     phone: _c['phone']!.text.trim(),
     currency: _currency,
+    usdToIqdRate: _displayBoth ? (parseMoney(_rate.text) ?? 0) : null,
     taxBasisPoints: parseMoney(_c['tax']!.text) ?? 0,
     receiptHeader: _c['header']!.text.trim(),
     receiptFooter: _c['footer']!.text.trim(),
@@ -172,7 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   DropdownButtonFormField<String>(
                     initialValue: _currency,
                     decoration: InputDecoration(
-                      labelText: context.tr('currency'),
+                      labelText: context.tr('mainCurrency'),
                       helperText: context.tr('currencyHint'),
                       helperMaxLines: 3,
                     ),
@@ -188,7 +197,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onChanged:
                         store.products.isNotEmpty || store.sales.isNotEmpty
                         ? null
-                        : (v) => setState(() => _currency = v!),
+                        : (v) => setState(() {
+                            _currency = v!;
+                            if (_currency == 'EUR') _displayBoth = false;
+                          }),
+                  ),
+                  CurrencyDisplayFields(
+                    currency: _currency,
+                    enabled: _displayBoth,
+                    rate: _rate,
+                    onChanged: (value) => setState(() => _displayBoth = value),
+                    onRateChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 20),
                   Field(_c['tax']!, 'taxRate', moneyValue: true),

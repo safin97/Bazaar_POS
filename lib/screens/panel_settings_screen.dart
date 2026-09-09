@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../core/strings.dart';
 import '../core/updates/app_updates.dart';
+import '../core/updates/github_updates.dart';
 import '../widgets/common.dart';
 
 class PanelSettingsScreen extends StatefulWidget {
-  const PanelSettingsScreen({super.key});
+  const PanelSettingsScreen({super.key, this.updates = const GitHubUpdates()});
+
+  final GitHubUpdates updates;
   @override
   State<PanelSettingsScreen> createState() => _PanelSettingsScreenState();
 }
@@ -14,6 +17,87 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
   bool _checking = false;
   String? _status;
   bool _available = false;
+  InstalledVersion? _installed;
+  GitHubRelease? _release;
+  bool _checkingGitHub = false;
+  bool _opening = false;
+  String? _githubStatus;
+  String? _openStatus;
+  Uri? _failedUrl;
+
+  bool get _githubAvailable =>
+      _release != null &&
+      _installed != null &&
+      _release!.isNewerThan(_installed!);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInstalledVersion();
+  }
+
+  Future<void> _loadInstalledVersion() async {
+    try {
+      final installed = await widget.updates.installedVersion();
+      if (mounted) setState(() => _installed = installed);
+    } catch (_) {
+      if (mounted) setState(() => _githubStatus = 'installedVersionFailed');
+    }
+  }
+
+  Future<void> _checkGitHub() async {
+    setState(() {
+      _checkingGitHub = true;
+      _githubStatus = null;
+      _openStatus = null;
+      _failedUrl = null;
+      _release = null;
+    });
+    try {
+      final installed = _installed ?? await widget.updates.installedVersion();
+      final release = await widget.updates.latestRelease();
+      final available = release.isNewerThan(installed);
+      if (!mounted) return;
+      setState(() {
+        _installed = installed;
+        _release = release;
+        _githubStatus = available ? 'githubUpdateAvailable' : 'githubUpToDate';
+      });
+    } on UpdateException catch (error) {
+      if (mounted) setState(() => _githubStatus = error.messageKey);
+    } catch (_) {
+      if (mounted) setState(() => _githubStatus = 'githubCheckFailed');
+    } finally {
+      if (mounted) setState(() => _checkingGitHub = false);
+    }
+  }
+
+  Future<void> _openGitHub(Uri url) async {
+    setState(() {
+      _opening = true;
+      _openStatus = null;
+      _failedUrl = null;
+    });
+    try {
+      // Invoke directly from the tap so browser popup protection allows it.
+      final opened = await widget.updates.openUrl(url);
+      if (!opened && mounted) {
+        setState(() {
+          _openStatus = 'githubOpenFailed';
+          _failedUrl = url;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _openStatus = 'githubOpenFailed';
+          _failedUrl = url;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _opening = false);
+    }
+  }
 
   Future<void> _check() async {
     setState(() {
@@ -83,23 +167,117 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 12),
-              Text('${context.tr('installedVersion')}: $appVersion'),
+              Text(
+                '${context.tr('installedVersion')}: ${_installed?.label ?? '—'}',
+              ),
               if (appBuildId != 'development')
                 Text('${context.tr('appBuild')}: $appBuildId'),
               const SizedBox(height: 16),
               Text(
+                '${context.tr('updateSource')}: ${widget.updates.repository}',
+              ),
+              const SizedBox(height: 8),
+              Text(
                 context.tr(
-                  supportsUpdates ? 'webUpdateHint' : 'nativeUpdateHint',
+                  widget.updates.platform == UpdatePlatform.web
+                      ? 'githubWebUpdateHint'
+                      : 'githubNativeUpdateHint',
                 ),
               ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  FilledButton.icon(
+                    key: const ValueKey('check-updates'),
+                    onPressed: _checkingGitHub || _opening
+                        ? null
+                        : _checkGitHub,
+                    icon: _checkingGitHub
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.system_update_alt),
+                    label: Text(
+                      context.tr(
+                        _checkingGitHub
+                            ? 'checkingUpdates'
+                            : 'checkGitHubUpdates',
+                      ),
+                    ),
+                  ),
+                  if (_githubAvailable &&
+                      _release!.downloadFor(widget.updates.platform) != null)
+                    FilledButton.icon(
+                      key: const ValueKey('download-github-update'),
+                      onPressed: _opening
+                          ? null
+                          : () => _openGitHub(
+                              _release!.downloadFor(widget.updates.platform)!,
+                            ),
+                      icon: const Icon(Icons.download_rounded),
+                      label: Text(context.tr('downloadUpdate')),
+                    ),
+                  TextButton.icon(
+                    key: const ValueKey('github-releases'),
+                    onPressed: _opening
+                        ? null
+                        : () => _openGitHub(
+                            _release?.pageUrl ?? widget.updates.releasesUrl,
+                          ),
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: Text(context.tr('githubReleases')),
+                  ),
+                ],
+              ),
+              if (_githubStatus != null) ...[
+                const SizedBox(height: 16),
+                Semantics(
+                  liveRegion: true,
+                  child: Text(context.tr(_githubStatus!)),
+                ),
+              ],
+              if (_release != null) ...[
+                const SizedBox(height: 8),
+                Text('${context.tr('latestVersion')}: ${_release!.tag}'),
+                if (_githubAvailable &&
+                    _release!.downloadFor(widget.updates.platform) == null) ...[
+                  const SizedBox(height: 8),
+                  Text(context.tr('githubNoInstallerHint')),
+                ],
+                if (_release!.notes.trim().isNotEmpty)
+                  ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: Text(context.tr('releaseNotes')),
+                    children: [
+                      Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: SelectableText(_release!.notes),
+                      ),
+                    ],
+                  ),
+              ],
+              if (_openStatus != null) ...[
+                const SizedBox(height: 8),
+                Semantics(
+                  liveRegion: true,
+                  child: Text(context.tr(_openStatus!)),
+                ),
+                SelectableText(_failedUrl.toString()),
+              ],
               if (supportsUpdates) ...[
+                const Divider(height: 36),
+                Text(context.tr('webUpdateHint')),
                 const SizedBox(height: 20),
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children: [
                     OutlinedButton.icon(
-                      key: const ValueKey('check-updates'),
+                      key: const ValueKey('check-web-updates'),
                       onPressed: _checking ? null : _check,
                       icon: _checking
                           ? const SizedBox(
@@ -110,7 +288,7 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                           : const Icon(Icons.system_update_alt),
                       label: Text(
                         context.tr(
-                          _checking ? 'checkingUpdates' : 'checkUpdates',
+                          _checking ? 'checkingUpdates' : 'checkWebUpdates',
                         ),
                       ),
                     ),
@@ -166,7 +344,10 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                             context.tr('aboutPurpose'),
                             context.tr('aboutPurposeValue'),
                           ),
-                          (context.tr('installedVersion'), appVersion),
+                          (
+                            context.tr('installedVersion'),
+                            _installed?.label ?? '—',
+                          ),
                           (
                             context.tr('language'),
                             'English · العربية · کوردی بادینی',
