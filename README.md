@@ -140,7 +140,9 @@ Badini translations are provided in `lib/core/strings.dart`; have a native Badin
 
 Product illustrations: Twemoji graphics by Twitter, Inc. and other contributors, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), from [Twemoji v16.0.1](https://github.com/jdecked/twemoji/tree/v16.0.1). The bundled images are unchanged; the full license is in `assets/products/LICENSE-GRAPHICS`.
 
-The default app logo and launcher icons use the shopping cart PNG supplied by the store owner, originally named `vecteezy_3d-shopping-cart-icon-on-transparent-background-png_16774483.png`. The bundled copy is `assets/branding/shop-logo.png`; native and web icon assets are resized from that same supplied artwork. A custom logo uploaded in Settings takes precedence inside the app.
+The default app logo and launcher icons use the colorful shopping cart image supplied by the store owner, originally named `vecteezy_colorful-shopping-cart-logo-with-green-yellow-and-red-stripes_46624660.jpg`. The bundled copy is `assets/branding/shop-logo.png`; native and web icon assets are resized from that same supplied artwork. The welcome screen always displays this app logo. After sign-in, a custom logo uploaded in Settings takes precedence for the market's screens and receipts.
+
+The welcome screen background uses the store owner's supplied `empty-cashier-work-place.jpg`, resized and bundled as `assets/branding/welcome-background.jpg` for offline use.
 
 Panel settings is available to signed-in staff for device language and app updates.
 For web releases, run `bash tool/build_web.sh` (also used by `tool/serve.sh`).
