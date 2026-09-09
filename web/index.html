@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#287563">
+  <meta name="description" content="Bazaar — your offline supermarket point of sale.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Bazaar POS">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Bazaar POS</title>
+  <link rel="manifest" href="manifest.json">
+  <style>body{margin:0;background:#f7f8f5;color:#203a35;font:15px system-ui}#loading{display:grid;place-content:center;height:100vh;text-align:center;gap:12px}#loading strong{font-size:30px;letter-spacing:-1px}#loading span{color:#7a8580}</style>
+</head>
+<body>
+  <div id="loading"><strong>Bazaar POS</strong><span>Opening your store…</span></div>
+  <script src="app_updates.js"></script>
+  <script>
+    async function start() {
+      const script = document.createElement('script');
+      script.src = 'flutter_bootstrap.js';
+      document.body.appendChild(script);
+      // Keep exclusive ownership until this tab closes. The IndexedDB VFS is single-tab.
+      await new Promise(() => {});
+    }
+    if (navigator.locks) {
+      navigator.locks.request('bazaar-pos-database', {ifAvailable: true}, async lock => {
+        if (lock) await start();
+        else document.getElementById('loading').innerHTML = '<strong>Your store is already open</strong><span>Close the other Bazaar tab, then refresh this page.</span>';
+      });
+    } else {
+      document.getElementById('loading').innerHTML = '<strong>A newer browser is needed</strong><span>Open this localhost address in a current Safari, Chrome, or Edge browser.</span>';
+    }
+    window.addEventListener('flutter-first-frame', () => document.getElementById('loading')?.remove());
+  </script>
+</body>
+</html>
