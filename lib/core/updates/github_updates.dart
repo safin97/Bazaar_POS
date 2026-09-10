@@ -51,11 +51,19 @@ class GitHubRelease {
     final tag = json['tag_name'];
     if (json['draft'] != false ||
         json['prerelease'] != false ||
-        tag is! String ||
-        !RegExp(r'^v?\d+\.\d+\.\d+(?:\+\d+)?$').hasMatch(tag)) {
+        tag is! String) {
       throw const UpdateException('invalidGitHubRelease');
     }
-    final version = Version.parse(tag.startsWith('v') ? tag.substring(1) : tag);
+    final match = RegExp(r'^v?(\d+\.\d+\.\d+)(?:[.+](\d+))?$').firstMatch(tag);
+    if (match == null || match.end != tag.length) {
+      throw const UpdateException('invalidGitHubRelease');
+    }
+    // Accept four-part desktop tags as major.minor.patch.build, while keeping
+    // the original tag for GitHub's release and download URLs.
+    final build = match.group(2);
+    final version = Version.parse(
+      '${match.group(1)}${build == null ? '' : '+$build'}',
+    );
     final rawAssets = json['assets'];
     if (rawAssets is! List) {
       throw const UpdateException('invalidGitHubRelease');
@@ -88,7 +96,7 @@ class GitHubRelease {
   bool isNewerThan(InstalledVersion installed) {
     final current = Version.parse(installed.version);
     // Ignore build metadata when comparing semantic versions. A numeric +build
-    // in the release tag can additionally update the same app version.
+    // or fourth component in the release tag can update the same app version.
     final latestBase = Version(version.major, version.minor, version.patch);
     final currentBase = Version(
       current.major,
@@ -108,7 +116,11 @@ class GitHubRelease {
   Uri? downloadFor(UpdatePlatform platform) {
     final names = switch (platform) {
       UpdatePlatform.android => ['bazaar-pos-android.apk'],
-      UpdatePlatform.macos => ['bazaar-pos-macos.dmg', 'bazaar-pos-macos.zip'],
+      UpdatePlatform.macos => [
+        'bazaar-pos-macos.dmg',
+        'bazaar-pos-macos.zip',
+        'Bazaar.POS.app.zip',
+      ],
       UpdatePlatform.windows => [
         'bazaar-pos-windows.exe',
         'bazaar-pos-windows.msix',

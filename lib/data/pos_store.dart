@@ -454,10 +454,7 @@ class PosStore extends ChangeNotifier {
     if (!settings.hasValidCurrencyDisplay) {
       throw const PosException('invalidExchangeRate');
     }
-    final market = Market(
-      id: newId(),
-      settings: settings,
-    );
+    final market = Market(id: newId(), settings: settings);
     _transaction('marketAdded', market.settings.name, () {
       _put('markets', market.id, market.toJson());
       for (final c in starterCategories(market.id)) {
@@ -837,6 +834,240 @@ class PosStore extends ChangeNotifier {
         ].map(cell).join(','),
       ),
     ].join('\r\n');
+  }
+
+  static const backupTables = [
+    'markets',
+    'categories',
+    'products',
+    'users',
+    'sales',
+    'preferences',
+  ];
+  static const maxBackupBytes = 100 * 1024 * 1024;
+
+  Uint8List createBackup() {
+    _require(owner: true);
+    _db.execute('BEGIN');
+    try {
+      final bytes = Uint8List.fromList(
+        utf8.encode(
+          jsonEncode({
+            'format': 'bazaar-pos-backup',
+            'version': 1,
+            'createdAt': DateTime.now().toUtc().toIso8601String(),
+            'tables': {
+              for (final table in backupTables)
+                table: _db
+                    .select('SELECT id, data FROM $table')
+                    .map(
+                      (row) => {
+                        'id': row['id'],
+                        'data': jsonDecode(row['data'] as String),
+                      },
+                    )
+                    .toList(),
+              'audit': _db
+                  .select('SELECT * FROM audit')
+                  .map((row) => Map<String, Object?>.from(row))
+                  .toList(),
+            },
+          }),
+        ),
+      );
+      if (bytes.length > maxBackupBytes) {
+        throw const PosException('backupTooLarge');
+      }
+      _db.execute('COMMIT');
+      return bytes;
+    } catch (_) {
+      _db.execute('ROLLBACK');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> _validateBackup(Uint8List bytes) {
+    if (bytes.length > maxBackupBytes) {
+      throw const PosException('backupTooLarge');
+    }
+    try {
+      final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+      if (backup['format'] != 'bazaar-pos-backup' || backup['version'] != 1) {
+        throw const FormatException();
+      }
+      DateTime.parse(backup['createdAt'] as String);
+      final tables = backup['tables'] as Map<String, dynamic>;
+      for (final table in backupTables) {
+        final ids = <String>{};
+        for (final entry in tables[table] as List) {
+          final row = entry as Map<String, dynamic>;
+          final id = row['id'] as String;
+          final data = row['data'] as Map<String, dynamic>;
+          if (id.isEmpty ||
+              !ids.add(id) ||
+              (table != 'preferences' && data['id'] != id)) {
+            throw const FormatException();
+          }
+        }
+      }
+      Iterable<Map<String, dynamic>> data(String table) =>
+          (tables[table] as List).map(
+            (row) => row['data'] as Map<String, dynamic>,
+          );
+      final markets = data('markets').map(Market.fromJson).toList();
+      final marketIds = markets.map((market) => market.id).toSet();
+      if (!marketIds.contains(defaultMarketId)) throw const FormatException();
+      void validateSettings(StoreSettings settings) {
+        if (settings.name.trim().isEmpty ||
+            !['USD', 'IQD', 'EUR'].contains(settings.currency) ||
+            !settings.hasValidCurrencyDisplay ||
+            ![58, 80].contains(settings.receiptWidth) ||
+            settings.taxBasisPoints < 0 ||
+            settings.taxBasisPoints > 10000) {
+          throw const FormatException();
+        }
+        _validatePhoto(settings.logo);
+      }
+
+      for (final market in markets) {
+        validateSettings(market.settings);
+      }
+      final categories = data('categories')
+          .map(ProductCategory.fromJson)
+          .toList();
+      for (final category in categories) {
+        if (!marketIds.contains(category.marketId)) {
+          throw const FormatException();
+        }
+        _validatePhoto(category.photo);
+      }
+      for (final product in data('products').map(Product.fromJson)) {
+        if (!marketIds.contains(product.marketId) ||
+            product.price < 0 ||
+            product.cost < 0 ||
+            product.stock < 0 ||
+            !categories.any(
+              (category) =>
+                  category.id == product.category &&
+                  category.marketId == product.marketId,
+            )) {
+          throw const FormatException();
+        }
+        _validatePhoto(product.photo);
+      }
+      final users = data('users').map(StaffUser.fromJson).toList();
+      if (!users.any(
+        (user) => user.active && user.role == UserRole.superManager,
+      )) {
+        throw const FormatException();
+      }
+      final usernames = <String>{};
+      for (final user in users) {
+        if (!marketIds.contains(user.marketId) ||
+            user.username.isEmpty ||
+            !usernames.add(user.username.toLowerCase()) ||
+            base64Decode(user.passwordHash).length != 32 ||
+            base64Decode(user.salt).length < 16) {
+          throw const FormatException();
+        }
+      }
+      for (final sale in data('sales').map(Sale.fromJson)) {
+        if (!marketIds.contains(sale.marketId) ||
+            !['cash', 'card'].contains(sale.paymentMethod) ||
+            !['en', 'ar', 'ku'].contains(sale.language) ||
+            sale.total < 0 ||
+            sale.tendered < sale.total ||
+            sale.lines.any(
+              (line) => line.quantity < 1 || line.price < 0 || line.cost < 0,
+            )) {
+          throw const FormatException();
+        }
+        validateSettings(sale.settings);
+      }
+      for (final row in tables['preferences'] as List) {
+        if (row['id'] == 'language' &&
+            !['en', 'ar', 'ku'].contains(row['data']['code'])) {
+          throw const FormatException();
+        }
+      }
+      final auditIds = <int>{};
+      for (final entry in tables['audit'] as List) {
+        final row = entry as Map<String, dynamic>;
+        if (!auditIds.add(row['id'] as int) ||
+            !marketIds.contains(row['marketId']) ||
+            row['actor'] is! String ||
+            row['action'] is! String ||
+            row['detail'] is! String) {
+          throw const FormatException();
+        }
+        DateTime.parse(row['time'] as String);
+      }
+      return tables;
+    } catch (_) {
+      throw const PosException('invalidBackup');
+    }
+  }
+
+  void validateBackup(Uint8List bytes) {
+    _require(owner: true);
+    _validateBackup(bytes);
+  }
+
+  void restoreBackup(Uint8List bytes) {
+    _require(owner: true);
+    final tables = _validateBackup(bytes);
+    final previousMarket = _activeMarketId;
+    final previousUser = currentUser;
+    final previousLanguage = language;
+    _db.execute('BEGIN IMMEDIATE');
+    try {
+      for (final table in backupTables) {
+        _db.execute('DELETE FROM $table');
+        for (final row in tables[table] as List) {
+          _put(table, row['id'] as String, row['data'] as Map<String, dynamic>);
+        }
+      }
+      _db.execute('DELETE FROM audit');
+      for (final row in tables['audit'] as List) {
+        _db.execute(
+          'INSERT INTO audit (id, time, actor, action, detail, marketId) VALUES (?, ?, ?, ?, ?, ?)',
+          [
+            row['id'],
+            row['time'],
+            row['actor'],
+            row['action'],
+            row['detail'],
+            row['marketId'],
+          ],
+        );
+      }
+      _db.execute(
+        'INSERT INTO audit (time, actor, action, detail, marketId) VALUES (?, ?, ?, ?, ?)',
+        [
+          DateTime.now().toIso8601String(),
+          previousUser!.name,
+          'backupRestored',
+          'Device backup',
+          defaultMarketId,
+        ],
+      );
+      currentUser = null;
+      _activeMarketId = defaultMarketId;
+      language = 'en';
+      // Parse restored records before committing so any failure rolls back.
+      _reload();
+      _db.execute('COMMIT');
+    } catch (_) {
+      _db.execute('ROLLBACK');
+      currentUser = previousUser;
+      _activeMarketId = previousMarket;
+      language = previousLanguage;
+      _reload();
+      rethrow;
+    }
+    _failures = 0;
+    _lockedUntil = null;
+    notifyListeners();
   }
 
   @override

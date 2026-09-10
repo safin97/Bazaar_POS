@@ -32,7 +32,9 @@ String money(int value, String currency) => currency == 'USD'
 
 String? secondaryMoney(int value, StoreSettings settings) {
   final amount = settings.secondaryAmount(value);
-  return amount == null ? null : '≈ ${money(amount, settings.secondaryCurrency!)}';
+  return amount == null
+      ? null
+      : '≈ ${money(amount, settings.secondaryCurrency!)}';
 }
 
 String displayExchangeRate(StoreSettings settings) =>
@@ -168,6 +170,149 @@ final Map<String, List<String>> translations = {
     "زمان و نویکرنێن ئەپێ بۆ ڤی ئامێری.",
   ],
   "appUpdates": ["App updates", "تحديثات التطبيق", "نویکرنێن ئەپێ"],
+  "backups": ["Backups", "النسخ الاحتياطية", "کۆپیێن پاشەکەفتێ"],
+  "createBackup": [
+    "Create backup",
+    "إنشاء نسخة احتياطية",
+    "کۆپیا پاشەکەفتێ دروست بکە",
+  ],
+  "restoreBackup": [
+    "Restore backup",
+    "استعادة نسخة احتياطية",
+    "کۆپیا پاشەکەفتێ بگەڕینەڤە",
+  ],
+  "backupScopeHint": [
+    "Back up all markets on this device, including products, sales, staff accounts, logos and settings. Keep backup files private.",
+    "انسخ جميع المتاجر على هذا الجهاز، بما فيها المنتجات والمبيعات وحسابات الموظفين والشعارات والإعدادات. احتفظ بملفات النسخ بشكل خاص.",
+    "کۆپیا هەمی مارکێتێن ڤی ئامێری بگرە، ب بەرهەم و فرۆتن و هەژمارێن کارمەندان و لوگۆ و ڕێکخستنان ڤە. فایلێن کۆپیێ تایبەت بهێلە.",
+  ],
+  "restoreBackupHint": [
+    "This replaces ALL markets, sales, inventory, accounts and settings on this device with the backup. Save a current backup first. Unsaved work will be lost and you will be signed out. Sign in using an account from the restored backup.",
+    "ستستبدل النسخة جميع المتاجر والمبيعات والمخزون والحسابات والإعدادات على هذا الجهاز. احفظ نسخة حالية أولًا. ستفقد العمل غير المحفوظ وسيتم تسجيل خروجك. سجّل الدخول بحساب موجود في النسخة المستعادة.",
+    "ئەڤ کۆپیە دێ هەمی مارکێت و فرۆتن و کۆگە و هەژمار و ڕێکخستنێن ڤی ئامێری بگوهۆڕیت. بەری وێ کۆپیەکا نوکە پاشەکەوت بکە. کارێ نە پاراستی دێ ژ دەست بچیت و دێ دەربکەڤی. ب هەژمارەکێ ناڤ کۆپیێ بچۆ ژوورڤە.",
+  ],
+  "backupSaved": [
+    "Backup saved.",
+    "تم حفظ النسخة الاحتياطية.",
+    "کۆپیا پاشەکەفتێ هاتە پاراستن.",
+  ],
+  "backupDownloadStarted": [
+    "Backup download started. Check your browser's downloads.",
+    "بدأ تنزيل النسخة الاحتياطية. تحقق من تنزيلات المتصفح.",
+    "داگرتنا کۆپیێ دەست پێ کر. داگرتنێن وێبگەڕێ بپشکنە.",
+  ],
+  "backupRestored": [
+    "Backup restored",
+    "تمت استعادة النسخة",
+    "کۆپی هاتە گەڕاندنەڤە",
+  ],
+  "invalidBackup": [
+    "This is not a valid Bazaar POS backup. No data was replaced.",
+    "هذا الملف ليس نسخة احتياطية صالحة لـ Bazaar POS. لم يتم استبدال أي بيانات.",
+    "ئەڤ فایلە کۆپیەکا دروست یا Bazaar POS نینە. چ داتا نەهاتە گوهۆڕین.",
+  ],
+  "backupTooLarge": [
+    "Backups must be smaller than 100 MB.",
+    "يجب أن يكون حجم النسخة الاحتياطية أقل من 100 ميغابايت.",
+    "پێدڤیە قەبارەیا کۆپیێ ژ ١٠٠ مێگابایت کێمتر بیت.",
+  ],
+  "backupActionFailed": [
+    "The backup action could not finish. Check storage or your internet connection, then try again.",
+    "تعذر إكمال العملية. تحقق من مساحة التخزين أو اتصال الإنترنت وحاول مجددًا.",
+    "کارێ کۆپیێ نەهاتە تمامکرن. بۆشایا پاشەکەوتکرنێ یان ئینتەرنێتێ بپشکنە و دوبارە تاقی بکە.",
+  ],
+  "googleDrive": ["Google Drive", "Google Drive", "Google Drive"],
+  "driveBackupHint": [
+    "Connect your Google account to store backups in Bazaar POS's private Drive folder. Restore recent backups here. Reconnect when the sign-in session expires.",
+    "اربط حساب Google لحفظ النسخ في مجلد التطبيق الخاص على Drive. استعد النسخ الحديثة من هنا. أعد الاتصال عند انتهاء جلسة تسجيل الدخول.",
+    "هەژمارا Google گرێ بدە دا کۆپیان د فولدەرا تایبەت یا ئەپێ ل Drive پاشەکەوت بکەی. کۆپیێن نوی ژ ڤێرە بگەڕینەڤە. دەمێ دانیشتن ب دوماهیک هات دوبارە گرێ بدە.",
+  ],
+  "driveNeedsSetup": [
+    "Google Drive sign-in needs to be configured by the app owner. Local backups are available now.",
+    "يحتاج مالك التطبيق إلى إعداد تسجيل الدخول إلى Google Drive. النسخ المحلية متاحة الآن.",
+    "خاوەنێ ئەپێ پێدڤیە چوونا ژوورڤە یا Google Drive ڕێک بخەت. کۆپیێن ناڤ ئامێری نوکە بەردەستن.",
+  ],
+  "driveUnsupported": [
+    "Direct Drive sign-in is available on desktop and web. On this device, create a local backup and upload it with Google Drive.",
+    "الاتصال المباشر بـ Drive متاح على الكمبيوتر والويب. على هذا الجهاز، أنشئ نسخة محلية وارفعها باستخدام Google Drive.",
+    "چوونا ڕاستەوخۆ یا Drive ل کۆمپیوتەر و وێبێ بەردەستە. ل ڤی ئامێری کۆپیەکا ناڤ ئامێری دروست بکە و ب Google Drive بار بکە.",
+  ],
+  "connectGoogleDrive": [
+    "Connect Google account",
+    "ربط حساب Google",
+    "هەژمارا Google گرێ بدە",
+  ],
+  "prepareGoogleDrive": [
+    "Prepare Google sign-in",
+    "تهيئة تسجيل الدخول إلى Google",
+    "چوونا Google ئامادە بکە",
+  ],
+  "connectedGoogleAccount": [
+    "Connected account",
+    "الحساب المرتبط",
+    "هەژمارا گرێدای",
+  ],
+  "disconnectGoogleDrive": ["Disconnect", "قطع الاتصال", "پەیوەندیێ ببڕە"],
+  "backupToDrive": [
+    "Back up to Google Drive",
+    "نسخ احتياطي إلى Google Drive",
+    "کۆپیێ ل Google Drive پاشەکەوت بکە",
+  ],
+  "restoreFromDrive": [
+    "Restore from Google Drive",
+    "استعادة من Google Drive",
+    "ژ Google Drive بگەڕینەڤە",
+  ],
+  "driveBackups": [
+    "Recent Drive backups",
+    "نسخ Drive الحديثة",
+    "کۆپیێن نوی یێن Drive",
+  ],
+  "driveBackupSaved": [
+    "Backup saved to Google Drive.",
+    "تم حفظ النسخة على Google Drive.",
+    "کۆپی ل Google Drive هاتە پاراستن.",
+  ],
+  "noDriveBackups": [
+    "No backups found for this Google account.",
+    "لم يتم العثور على نسخ لهذا الحساب.",
+    "چ کۆپی بۆ ڤێ هەژمارا Google نەهاتن دیتن.",
+  ],
+  "driveSignInCancelled": [
+    "Google sign-in was cancelled or timed out.",
+    "تم إلغاء تسجيل الدخول أو انتهت مهلته.",
+    "چوونا Google هاتە بەتاڵکرن یان دەمێ وێ ب دوماهیک هات.",
+  ],
+  "driveOpenFailed": [
+    "Could not open the browser for Google sign-in.",
+    "تعذر فتح المتصفح لتسجيل الدخول إلى Google.",
+    "وێبگەڕ بۆ چوونا Google نەهاتە ڤەکرن.",
+  ],
+  "driveConnectionFailed": [
+    "Could not connect to Google. Check your connection and sign-in setup.",
+    "تعذر الاتصال بـ Google. تحقق من الاتصال وإعداد تسجيل الدخول.",
+    "پەیوەندی ب Google نەسەرکەفت. پەیوەندی و ڕێکخستنێن چوونێ بپشکنە.",
+  ],
+  "drivePermissionMissing": [
+    "Google Drive did not allow this request. Check backup permission, API setup and available Drive space.",
+    "لم يسمح Google Drive بهذا الطلب. تحقق من إذن النسخ وإعداد API والمساحة المتاحة.",
+    "Google Drive ڕێک نەدا ڤی داخوازێ. دەستهەلات و ڕێکخستن و بۆشایا Drive بپشکنە.",
+  ],
+  "driveSessionExpired": [
+    "Your Google session expired. Connect your account again.",
+    "انتهت جلسة Google. اربط حسابك مجددًا.",
+    "دانیشتنا Google ب دوماهیک هات. هەژمارێ دوبارە گرێ بدە.",
+  ],
+  "driveRequestFailed": [
+    "Google Drive could not complete the request. Try again later.",
+    "تعذر إكمال الطلب على Google Drive. حاول لاحقًا.",
+    "Google Drive نەشیا داخوازێ تمام بکەت. پاشی دوبارە تاقی بکە.",
+  ],
+  "driveRevokeFailed": [
+    "Disconnected on this device. Google could not revoke access; you can remove the app in your Google account permissions.",
+    "تم قطع الاتصال على هذا الجهاز. تعذر إلغاء إذن Google؛ يمكنك إزالة التطبيق من أذونات حساب Google.",
+    "پەیوەندی ل ڤی ئامێری هاتە بڕین. Google نەشیا دەستهەلاتێ بسڕیت؛ دشێی ئەپێ ژ دەستهەلاتێن هەژمارا Google بسڕی.",
+  ],
   "installedVersion": [
     "Installed version",
     "الإصدار المثبت",
@@ -404,11 +549,7 @@ final Map<String, List<String>> translations = {
     "پارەدان و پاشماوە ب",
   ],
   "referenceTotal": ["Reference total", "الإجمالي التقريبي", "کۆما نزیکەیی"],
-  "displayOnly": [
-    "For display only",
-    "للعرض فقط",
-    "تەنێ بۆ پیشاندانێ",
-  ],
+  "displayOnly": ["For display only", "للعرض فقط", "تەنێ بۆ پیشاندانێ"],
   "marketSetupHint": [
     "Add a market with its logo and currency preferences, then set receipt details in Settings and add staff in Team. Usernames must be unique across markets.",
     "أضف متجرًا مع شعاره وتفضيلات العملة، ثم اضبط الإيصال في الإعدادات وأضف الموظفين في الفريق. يجب أن تكون أسماء المستخدمين فريدة بين المتاجر.",

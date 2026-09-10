@@ -394,14 +394,15 @@ class FormDialog extends StatelessWidget {
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            child: OverflowBar(
+              alignment: MainAxisAlignment.end,
+              spacing: 12,
+              overflowSpacing: 8,
               children: [
                 TextButton(
                   onPressed: busy ? null : () => Navigator.pop(context),
                   child: Text(context.tr('cancel')),
                 ),
-                const SizedBox(width: 12),
                 FilledButton(
                   onPressed: busy ? null : onSave,
                   child: busy

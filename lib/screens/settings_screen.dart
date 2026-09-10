@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../data/models.dart';
 import '../widgets/common.dart';
 import '../widgets/currency_display_fields.dart';
+import '../widgets/backup_settings_card.dart';
 import '../widgets/receipt.dart';
 import '../widgets/photo_picker.dart';
 
@@ -317,6 +318,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
         ),
+        if (store.isOwner) ...[
+          const SizedBox(height: 24),
+          const BackupSettingsCard(),
+        ],
       ],
     );
   }

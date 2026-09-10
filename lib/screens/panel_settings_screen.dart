@@ -336,6 +336,7 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                 children:
                     [
                           (context.tr('aboutAppName'), 'Bazaar POS'),
+                          ('Power By:', 'Safin Gulli'),
                           (
                             context.tr('storeName'),
                             context.store.settings.name,

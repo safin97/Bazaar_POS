@@ -12,6 +12,13 @@ To build and start it again:
 ./tool/serve.sh
 ```
 
+In VS Code, select **Bazaar POS (localhost:8080)** in Run and Debug for a
+development session at the same address. Stop the preview server before using
+that launch configuration so port 8080 is available.
+
+To make the app available at an internet address, follow the
+[website publishing and GitHub release guide](docs/publishing.md).
+
 The welcome screen shows only the store branding, language selector, and username/password sign-in form. Enter username **`safin97`** and the password supplied by the store owner, then select **Sign in**. This account has **super manager** access. The password is not printed in this README or stored as plaintext in the app.
 
 A one-time migration provisions this account for both fresh installations and existing local databases. Existing inventory, sales, branding and other staff accounts are retained. Subsequent starts respect account edits and password changes rather than resetting them. New installations include editable sample inventory with no fabricated sales. Store details and team accounts are managed after signing in.
@@ -41,13 +48,13 @@ Open only one tab per browser profile. The browser preview holds an exclusive We
 
 ## Set up two markets and admins
 
-1. Sign in as `safin97`, open **Markets**, and choose **Add market**. Enter its name and choose **USD — US dollar ($)**, IQD or EUR. The original market and its records remain available.
-2. **Manage market** selects that market and opens **Settings**. Upload its logo and edit the name, address, phone and receipt header/footer, then save.
+1. Sign in as `safin97`, open **Markets**, and choose **Add market**. Enter its name, optionally upload its logo, and choose USD, IQD or EUR as its **Main currency**. For USD/IQD markets, optionally turn on **Display USD and IQD** and enter your rate as IQD for 1 USD.
+2. **Manage market** selects that market and opens **Settings**. Edit its logo, name, address, phone, receipt details and optional display rate, then save.
 3. Open **Team** and add an **Admin**, **Market owner** or **Cashier** account. When the super admin selects the **Admin** role for a new account, a **Market** dropdown lets them assign any existing market; owners and cashiers use the current market. Usernames are unique across this device so the login form stays username/password only.
 4. Repeat for another market. Admins and staff are assigned to their market when created; they enter that market automatically at login. Only the super admin can switch markets or create another market.
 5. Each admin can use **Categories** to add/edit category names, photos and icons, and **Inventory** to add products and their photos/icons. A category containing products cannot be deleted until those products are reassigned or removed.
 
-Choose the market currency before adding inventory or making sales. Currency is fixed after that so existing prices and receipts are not silently reinterpreted. This is per-market currency support; there is no exchange-rate conversion or mixed USD/IQD tender within a sale.
+Choose the main currency before adding inventory or making sales. It is fixed after that so existing prices and receipts are not reinterpreted. Optional USD/IQD display adds an approximate second price in the register and inventory, and a reference total at checkout and on receipts. Enter the exchange rate yourself; it is not downloaded automatically. Payments, change, stored prices, costs, reports and CSV exports use the main currency. Each receipt keeps the display rate used when it was issued, so changing a rate later does not change old receipts.
 
 A market owner opens **Overview** with revenue, gross profit, receipt count and item count. Select a date period and expand **Sales by staff** to see each seller’s items and receipts. **Sales history** supports search, PDF receipt printing/saving and CSV export including market, item count, cost and gross profit. Gross profit subtracts item costs and discounts and excludes tax; it does not include rent, wages or other operating expenses.
 
@@ -64,6 +71,7 @@ A market owner opens **Overview** with revenue, gross profit, receipt count and 
 | Add/edit/delete admin and owner accounts | — | — | — | Yes |
 | Market branding, receipts and audit log | — | Yes | — | Yes |
 | Create or switch markets | — | — | — | Yes |
+| Create or restore a complete-device backup | — | — | — | Yes |
 
 Permissions apply only within the account’s assigned market. When adding or editing a **Cashier** in **Team & access**, admins and super admins can select **Extra permissions**: all-market sales/profit reports and CSV export; inventory/category management (including prices, costs and photos); checkout discounts; and sale voiding/restocking. All are off by default. Voiding applies only to visible receipts: grant reporting access too to include other sellers’ receipts. These options never grant staff management, market switching or branding access.
 
@@ -140,6 +148,13 @@ The default app logo and launcher icons use the colorful shopping cart image sup
 
 The welcome screen background uses the store owner's supplied `empty-cashier-work-place.jpg`, resized and bundled as `assets/branding/welcome-background.jpg` for offline use.
 
+## Backups
+
+The super manager can open **Settings → Backups** to save or restore all markets
+on this device. Optional Google Drive backups use Google account sign-in on web
+and desktop, after the app owner configures a Google OAuth client. See
+[backup usage and Google Drive setup](docs/google-drive-backups.md).
+
 ## GitHub updates
 
 Open **Panel settings → App updates → Check GitHub for updates**. The app checks
@@ -172,13 +187,15 @@ To publish an update:
 3. Create a **published, non-prerelease GitHub release** tagged `v1.0.2+3` (or
    `v1.0.2`) and attach the packages. Add installation instructions to its notes.
    Numeric `+build` tags also support an update to the same version with a higher
-   build number. An ordinary Git push or tag without a published release does
+   build number. Four-part tags such as `v1.0.2.3` are also accepted as
+   `1.0.2+3`; the fourth number is the build number. An ordinary Git push or tag
+   without a published release does
    not create an app update.
 
 | Device | Recognized GitHub release asset names, in preference order |
 | --- | --- |
 | Android | `bazaar-pos-android.apk` |
-| macOS | `bazaar-pos-macos.dmg`, `bazaar-pos-macos.zip` |
+| macOS | `bazaar-pos-macos.dmg`, `bazaar-pos-macos.zip`, `Bazaar.POS.app.zip` |
 | Windows | `bazaar-pos-windows.exe`, `bazaar-pos-windows.msix`, `bazaar-pos-windows.zip` |
 | Linux (if you add a Linux build target) | `bazaar-pos-linux.AppImage`, `bazaar-pos-linux.tar.gz` |
 | Browser | `bazaar-pos-web.zip` |

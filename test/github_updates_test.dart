@@ -90,6 +90,10 @@ void main() {
         ('v1.0.1+2', '1.0.1', '2', false),
         ('v1.0.1+1', '1.0.1', '2', false),
         ('v1.0.1+99', '1.0.2', '1', false),
+        ('v1.0.1.3', '1.0.1', '2', true),
+        ('v1.0.1.10', '1.0.1', '9', true),
+        ('v1.0.1.3', '1.0.1', '3', false),
+        ('v1.0.0.3', '1.0.2', '3', false),
         ('v1.0.1', '2.0.0', '1', false),
         ('v1.0.1', '1.0.1-beta.1', '1', true),
       ]) {
@@ -101,6 +105,16 @@ void main() {
       }
     },
   );
+
+  test('four-part release tags retain their original download URLs', () {
+    final latest = release(tag: 'v1.0.0.3');
+    expect(latest.version.toString(), '1.0.0+3');
+    expect(latest.pageUrl.path, '/safin97/flutter-pos/releases/tag/v1.0.0.3');
+    expect(
+      latest.downloadFor(UpdatePlatform.web).toString(),
+      'https://github.com/safin97/flutter-pos/releases/download/v1.0.0.3/bazaar-pos-web.zip',
+    );
+  });
 
   test('selects the platform package, never source archives or iOS IPAs', () {
     final latest = release();
@@ -117,11 +131,33 @@ void main() {
     expect(latest.pageUrl.path, '/safin97/flutter-pos/releases/tag/v1.0.2+3');
   });
 
+  test('recognizes the existing Mac release package only for macOS', () {
+    final latest = GitHubRelease.fromJson({
+      ...releaseJson(tag: 'v1.0.0.3'),
+      'assets': [
+        {
+          'name': 'Bazaar.POS.app.zip',
+          'state': 'uploaded',
+          'browser_download_url': 'https://github.com/safin97/flutter-pos/releases/download/v1.0.0.3/Bazaar.POS.app.zip',
+        },
+      ],
+    }, repository: githubRepository);
+    expect(
+      latest.downloadFor(UpdatePlatform.macos)!.pathSegments.last,
+      'Bazaar.POS.app.zip',
+    );
+    expect(latest.downloadFor(UpdatePlatform.web), isNull);
+    expect(latest.downloadFor(UpdatePlatform.windows), isNull);
+  });
+
   test('rejects malformed, draft and prerelease metadata', () {
     for (final changes in [
       {'tag_name': 'latest'},
       {'tag_name': 'v1.0.2-beta.1'},
       {'tag_name': 'v1.0.2\n'},
+      {'tag_name': 'v1.0.2.3\n'},
+      {'tag_name': 'v1.0.2.3+4'},
+      {'tag_name': 'v1.0.2.3.4'},
       {'draft': true},
       {'prerelease': true},
       {'assets': null},

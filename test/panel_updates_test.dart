@@ -109,6 +109,24 @@ void main() {
     expect(find.byKey(const ValueKey('download-github-update')), findsNothing);
   });
 
+  testWidgets('checks and downloads releases with a four-part version tag', (
+    tester,
+  ) async {
+    final updates = FakeUpdates()..latest = release(tag: 'v1.0.1.3');
+    await showPanel(tester, updates);
+    await tapKey(tester, 'check-updates');
+    expect(find.text('Latest version: v1.0.1.3'), findsOneWidget);
+    expect(
+      find.text('A newer version is available on GitHub.'),
+      findsOneWidget,
+    );
+    await tapKey(tester, 'download-github-update');
+    expect(
+      updates.opened.toString(),
+      'https://github.com/safin97/flutter-pos/releases/download/v1.0.1.3/bazaar-pos-android.apk',
+    );
+  });
+
   testWidgets('a failed check shows feedback and can be retried', (
     tester,
   ) async {

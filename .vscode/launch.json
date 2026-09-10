@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Bazaar POS (localhost:8080)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "web-server",
+            "args": [
+                "--web-hostname", "localhost",
+                "--web-port", "8080"
+            ]
+        },
+        {
             "name": "flutter pos",
             "request": "launch",
             "type": "dart"
