@@ -12,3 +12,5 @@ PRODUCT_BUNDLE_IDENTIFIER = com.bazaar.bazaarPos
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2026 com.bazaar. All rights reserved.
+
+#include "Updater.xcconfig"

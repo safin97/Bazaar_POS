@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import '../core/strings.dart';
 import '../core/updates/app_updates.dart';
 import '../core/updates/github_updates.dart';
+import '../core/updates/update_installer.dart';
 import '../widgets/common.dart';
 
 class PanelSettingsScreen extends StatefulWidget {
-  const PanelSettingsScreen({super.key, this.updates = const GitHubUpdates()});
+  const PanelSettingsScreen({super.key, this.updates = const GitHubUpdates(), this.installer});
 
   final GitHubUpdates updates;
+  final UpdateInstaller? installer;
   @override
   State<PanelSettingsScreen> createState() => _PanelSettingsScreenState();
 }
@@ -24,6 +26,10 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
   String? _githubStatus;
   String? _openStatus;
   Uri? _failedUrl;
+  late final _installer = widget.installer ?? createUpdateInstaller();
+  InstallCapability _installCapability = InstallCapability.none;
+  bool _installing = false;
+  InstallProgress? _installProgress;
 
   bool get _githubAvailable =>
       _release != null &&
@@ -34,6 +40,52 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
   void initState() {
     super.initState();
     _loadInstalledVersion();
+    _prepareInstaller();
+  }
+
+  Future<void> _prepareInstaller() async {
+    final capability = await _installer.prepare(widget.updates.repository);
+    if (mounted) setState(() => _installCapability = capability);
+  }
+
+  @override
+  void dispose() {
+    _installer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _installUpdate() async {
+    final release = _release;
+    if (_installing || release == null || !_githubAvailable) return;
+    final confirmed = await confirmAction(context, title: 'installUpdate',
+        message: 'installUpdateConfirm', action: 'installUpdate');
+    if (!confirmed || !mounted) return;
+    setState(() {
+      _installing = true;
+      _installProgress = const InstallProgress('updateDownloading');
+      _githubStatus = null;
+    });
+    try {
+      final result = await _installer.install(release, (progress) {
+        if (mounted) setState(() => _installProgress = progress);
+      });
+      if (!mounted) return;
+      if (result == InstallResult.reload) {
+        setState(() => _installProgress = const InstallProgress('updateRestarting'));
+        reloadApp();
+      } else {
+        setState(() => _githubStatus = 'updateInstallerOpened');
+      }
+    } on UpdateException catch (error) {
+      if (mounted) setState(() => _githubStatus = error.messageKey);
+    } catch (_) {
+      if (mounted) setState(() => _githubStatus = 'updateInstallFailed');
+    } finally {
+      if (mounted) setState(() {
+        _installing = false;
+        _installProgress = null;
+      });
+    }
   }
 
   Future<void> _loadInstalledVersion() async {
@@ -179,7 +231,9 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
               const SizedBox(height: 8),
               Text(
                 context.tr(
-                  widget.updates.platform == UpdatePlatform.web
+                  _installCapability != InstallCapability.none
+                      ? 'directUpdateHint'
+                      : widget.updates.platform == UpdatePlatform.web
                       ? 'githubWebUpdateHint'
                       : 'githubNativeUpdateHint',
                 ),
@@ -191,7 +245,7 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                 children: [
                   FilledButton.icon(
                     key: const ValueKey('check-updates'),
-                    onPressed: _checkingGitHub || _opening
+                    onPressed: _checkingGitHub || _opening || _installing
                         ? null
                         : _checkGitHub,
                     icon: _checkingGitHub
@@ -213,17 +267,20 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                       _release!.downloadFor(widget.updates.platform) != null)
                     FilledButton.icon(
                       key: const ValueKey('download-github-update'),
-                      onPressed: _opening
+                      onPressed: _opening || _installing
                           ? null
-                          : () => _openGitHub(
+                          : _installCapability != InstallCapability.none
+                              ? _installUpdate
+                              : () => _openGitHub(
                               _release!.downloadFor(widget.updates.platform)!,
                             ),
                       icon: const Icon(Icons.download_rounded),
-                      label: Text(context.tr('downloadUpdate')),
+                      label: Text(context.tr(_installCapability != InstallCapability.none
+                          ? 'installUpdate' : 'downloadUpdate')),
                     ),
                   TextButton.icon(
                     key: const ValueKey('github-releases'),
-                    onPressed: _opening
+                    onPressed: _opening || _installing
                         ? null
                         : () => _openGitHub(
                             _release?.pageUrl ?? widget.updates.releasesUrl,
@@ -233,6 +290,12 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                   ),
                 ],
               ),
+              if (_installProgress case final progress?) ...[
+                const SizedBox(height: 16),
+                LinearProgressIndicator(value: progress.fraction),
+                const SizedBox(height: 8),
+                Semantics(liveRegion: true, child: Text(context.tr(progress.stage))),
+              ],
               if (_githubStatus != null) ...[
                 const SizedBox(height: 16),
                 Semantics(
@@ -278,7 +341,7 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                   children: [
                     OutlinedButton.icon(
                       key: const ValueKey('check-web-updates'),
-                      onPressed: _checking ? null : _check,
+                      onPressed: _checking || _installing ? null : _check,
                       icon: _checking
                           ? const SizedBox(
                               width: 18,
@@ -294,7 +357,7 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                     ),
                     if (_available)
                       FilledButton.icon(
-                        onPressed: _apply,
+                        onPressed: _installing ? null : _apply,
                         icon: const Icon(Icons.refresh),
                         label: Text(context.tr('loadUpdate')),
                       ),

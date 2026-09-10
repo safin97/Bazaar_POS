@@ -20,7 +20,8 @@ dependencies:
   printing: ^5.14.2
   cupertino_icons: ^1.0.9
   http: ^1.6.0
-  package_info_plus: ^10.2.1
+  # Keep compatible with file_picker 10's win32 dependency.
+  package_info_plus: ^9.0.1
   pub_semver: ^2.2.0
   url_launcher: ^6.3.2
 
