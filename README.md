@@ -215,3 +215,4 @@ repository override above. No release is published automatically by these script
 
 Updater regression checks: `flutter test test/github_updates_test.dart test/panel_updates_test.dart`.
 The GitHub request format follows the [GitHub Releases API](https://docs.github.com/en/rest/releases/releases#get-the-latest-release).
+# Bazaar_POS
