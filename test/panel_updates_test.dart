@@ -123,7 +123,7 @@ void main() {
     await tapKey(tester, 'download-github-update');
     expect(
       updates.opened.toString(),
-      'https://github.com/safin97/flutter-pos/releases/download/v1.0.1.3/bazaar-pos-android.apk',
+      'https://github.com/safin97/MarketBazaar/releases/download/v1.0.1.3/bazaar-pos-android.apk',
     );
   });
 

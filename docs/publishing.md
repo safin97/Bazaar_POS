@@ -42,7 +42,7 @@ with that client's ID. Follow [the OAuth setup guide](google-drive-backups.md).
 
 ## Make the GitHub update button work
 
-The updater reads published releases from `safin97/flutter-pos`. A release must
+The updater reads published releases from `safin97/MarketBazaar`. A release must
 be publicly accessible, published, and marked as a stable release. A source-code
 push on its own does not publish an app update.
 

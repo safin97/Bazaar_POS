@@ -274,7 +274,7 @@ class LocalHandler(SimpleHTTPRequestHandler):
             self.json_response(400, {'error': key})
 
 
-def create_server(root, port=8080, repository='safin97/flutter-pos'):
+def create_server(root, port=8080, repository='safin97/MarketBazaar'):
     root = Path(root).resolve()
     previous = root.with_name(root.name + '.previous')
     # Recover if the process stopped between the two directory renames.
@@ -291,7 +291,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8080)
     parser.add_argument('--directory', type=Path, default=Path(__file__).resolve().parents[1] / 'build/web')
-    parser.add_argument('--repository', default='safin97/flutter-pos')
+    parser.add_argument('--repository', default='safin97/MarketBazaar')
     options = parser.parse_args()
     with create_server(options.directory, options.port, options.repository) as server:
         print('Bazaar POS: http://localhost:' + str(server.server_port), flush=True)

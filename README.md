@@ -158,7 +158,7 @@ and desktop, after the app owner configures a Google OAuth client. See
 ## GitHub updates
 
 Open **Panel settings → App updates → Check GitHub for updates**. The app checks
-`safin97/flutter-pos` for the latest published stable GitHub release, compares it
+`safin97/MarketBazaar` for the latest published stable GitHub release, compares it
 with the running app version, and shows the release notes. **Download update**
 opens the matching package in the device's browser. Open the downloaded installer
 to finish updating; downloading alone does not replace the running app. Finish

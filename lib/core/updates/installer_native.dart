@@ -12,7 +12,7 @@ class _NativeInstaller extends UpdateInstaller {
   @override
   Future<InstallCapability> prepare(String repository) async {
     if (defaultTargetPlatform != TargetPlatform.macOS ||
-        repository != 'safin97/flutter-pos') return InstallCapability.none;
+        repository != 'safin97/MarketBazaar') return InstallCapability.none;
     try {
       return await _channel.invokeMethod<String>('capabilities') == 'macos'
           ? InstallCapability.macos : InstallCapability.none;

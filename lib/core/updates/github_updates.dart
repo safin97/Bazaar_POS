@@ -10,7 +10,7 @@ import 'app_updates.dart';
 
 const githubRepository = String.fromEnvironment(
   'GITHUB_REPOSITORY',
-  defaultValue: 'safin97/flutter-pos',
+  defaultValue: 'safin97/MarketBazaar',
 );
 
 enum UpdatePlatform { android, ios, macos, windows, linux, web, unsupported }
