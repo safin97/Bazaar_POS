@@ -7,6 +7,7 @@ environment:
   sdk: ^3.13.0
 
 dependencies:
+  auto_update: ^latest
   flutter:
     sdk: flutter
   flutter_localizations:
