@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:bazaar_pos/data/pos_store.dart';
-import 'package:bazaar_pos/main.dart';
-import 'package:bazaar_pos/widgets/receipt.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
+import 'package:Bazaar_POS/main.dart';
+import 'package:Bazaar_POS/widgets/receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -91,7 +91,7 @@ void main() {
       addTearDown(store.dispose);
       await tester.runAsync(
         () => store.setup(
-          storeName: 'Bazaar Market',
+          storeName: 'Market_Bazaar',
           name: 'Test Manager',
           username: 'manager',
           password: 'test-password',

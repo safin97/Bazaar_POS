@@ -81,10 +81,12 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
     } catch (_) {
       if (mounted) setState(() => _githubStatus = 'updateInstallFailed');
     } finally {
-      if (mounted) setState(() {
+      if (mounted) {
+        setState(() {
         _installing = false;
         _installProgress = null;
       });
+      }
     }
   }
 
@@ -398,8 +400,8 @@ class _PanelSettingsScreenState extends State<PanelSettingsScreen> {
                 ),
                 children:
                     [
-                          (context.tr('aboutAppName'), 'Bazaar POS'),
-                          ('Power By:', 'Safin Gulli'),
+                          (context.tr('aboutAppName'), 'Bazaar_POS'),
+                          ('Powered By:', 'Safin Gulli'),
                           (
                             context.tr('storeName'),
                             context.store.settings.name,

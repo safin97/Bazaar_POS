@@ -1,6 +1,6 @@
 {
-    "name": "Bazaar POS",
-    "short_name": "Bazaar POS",
+    "name": "Bazaar_POS",
+    "short_name": "Bazaar_POS",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#287563",

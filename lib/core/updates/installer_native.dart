@@ -7,12 +7,14 @@ import 'update_installer.dart';
 UpdateInstaller createInstaller() => _NativeInstaller();
 
 class _NativeInstaller extends UpdateInstaller {
-  static const _channel = MethodChannel('bazaar_pos/app_updates');
+  static const _channel = MethodChannel('Bazaar_POS/app_updates');
 
   @override
   Future<InstallCapability> prepare(String repository) async {
     if (defaultTargetPlatform != TargetPlatform.macOS ||
-        repository != 'safin97/MarketBazaar') return InstallCapability.none;
+        repository != 'safin97/Bazaar_POS') {
+      return InstallCapability.none;
+    }
     try {
       return await _channel.invokeMethod<String>('capabilities') == 'macos'
           ? InstallCapability.macos : InstallCapability.none;

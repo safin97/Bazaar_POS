@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:ui' as ui;
 
-import 'package:bazaar_pos/data/models.dart';
-import 'package:bazaar_pos/data/pos_store.dart';
-import 'package:bazaar_pos/main.dart';
-import 'package:bazaar_pos/screens/inventory_screen.dart';
-import 'package:bazaar_pos/widgets/photo_picker.dart';
-import 'package:bazaar_pos/widgets/common.dart';
-import 'package:bazaar_pos/widgets/receipt.dart';
+import 'package:Bazaar_POS/data/models.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
+import 'package:Bazaar_POS/main.dart';
+import 'package:Bazaar_POS/screens/inventory_screen.dart';
+import 'package:Bazaar_POS/widgets/photo_picker.dart';
+import 'package:Bazaar_POS/widgets/common.dart';
+import 'package:Bazaar_POS/widgets/receipt.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

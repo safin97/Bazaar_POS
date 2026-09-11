@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:bazaar_pos/core/strings.dart';
-import 'package:bazaar_pos/core/theme.dart';
-import 'package:bazaar_pos/screens/markets_screen.dart';
-import 'package:bazaar_pos/widgets/backup_settings_card.dart';
+import 'package:Bazaar_POS/core/strings.dart';
+import 'package:Bazaar_POS/core/theme.dart';
+import 'package:Bazaar_POS/screens/markets_screen.dart';
+import 'package:Bazaar_POS/widgets/backup_settings_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -144,7 +144,7 @@ void main() {
       await tap(tester, find.byKey(const ValueKey('create-backup')));
       expect(
         jsonDecode(utf8.decode(files.saved!))['format'],
-        'bazaar-pos-backup',
+        'Bazaar_POS-backup',
       );
       files.selected = files.saved;
       store.createMarket(name: 'Keep until confirmed', currency: 'USD');

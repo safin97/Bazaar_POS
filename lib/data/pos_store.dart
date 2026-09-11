@@ -853,7 +853,7 @@ class PosStore extends ChangeNotifier {
       final bytes = Uint8List.fromList(
         utf8.encode(
           jsonEncode({
-            'format': 'bazaar-pos-backup',
+            'format': 'Bazaar_POS-backup',
             'version': 1,
             'createdAt': DateTime.now().toUtc().toIso8601String(),
             'tables': {
@@ -892,7 +892,7 @@ class PosStore extends ChangeNotifier {
     }
     try {
       final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-      if (backup['format'] != 'bazaar-pos-backup' || backup['version'] != 1) {
+      if (backup['format'] != 'Bazaar_POS-backup' || backup['version'] != 1) {
         throw const FormatException();
       }
       DateTime.parse(backup['createdAt'] as String);

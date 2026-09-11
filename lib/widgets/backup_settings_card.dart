@@ -44,7 +44,7 @@ class _BackupSettingsCardState extends State<BackupSettingsCard> {
   }
 
   String get _filename =>
-      'bazaar-pos-backup-${DateTime.now().toUtc().toIso8601String().replaceAll(':', '-')}.json';
+      'Bazaar_POS-backup-${DateTime.now().toUtc().toIso8601String().replaceAll(':', '-')}.json';
 
   Future<void> _run(Future<void> Function() action) async {
     if (_busy) return;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bazaar_pos/data/models.dart';
-import 'package:bazaar_pos/data/pos_store.dart';
+import 'package:Bazaar_POS/data/models.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'market_currency_display_test.dart' show createStore, logo;

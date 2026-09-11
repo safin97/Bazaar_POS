@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bazaar_pos/core/updates/app_updates.dart';
-import 'package:bazaar_pos/core/updates/github_updates.dart';
+import 'package:Bazaar_POS/core/updates/app_updates.dart';
+import 'package:Bazaar_POS/core/updates/github_updates.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -16,16 +16,16 @@ Map<String, dynamic> releaseJson({String tag = 'v1.0.2+3'}) => {
   'body': 'Improved checkout.',
   'assets': [
     for (final name in [
-      'bazaar-pos-android.apk',
-      'bazaar-pos-macos.zip',
-      'bazaar-pos-windows.zip',
-      'bazaar-pos-web.zip',
+      'Bazaar_POS-android.apk',
+      'Bazaar_POS-macos.zip',
+      'Bazaar_POS-windows.zip',
+      'Bazaar_POS-web.zip',
     ])
       {
         'name': name,
         'state': 'uploaded',
         'browser_download_url':
-            'https://github.com/safin97/MarketBazaar/releases/download/$tag/$name',
+            'https://github.com/safin97/Bazaar_POS/releases/download/$tag/$name',
       },
   ],
 };
@@ -66,8 +66,8 @@ void main() {
     'reads the installed native version instead of a hardcoded value',
     () async {
       PackageInfo.setMockInitialValues(
-        appName: 'Bazaar POS',
-        packageName: 'com.example.bazaar_pos',
+        appName: 'Bazaar_POS',
+        packageName: 'com.example.Bazaar_POS',
         version: '2.3.4',
         buildNumber: '15',
         buildSignature: '',
@@ -109,26 +109,26 @@ void main() {
   test('four-part release tags retain their original download URLs', () {
     final latest = release(tag: 'v1.0.0.3');
     expect(latest.version.toString(), '1.0.0+3');
-    expect(latest.pageUrl.path, '/safin97/MarketBazaar/releases/tag/v1.0.0.3');
+    expect(latest.pageUrl.path, '/safin97/Bazaar_POS/releases/tag/v1.0.0.3');
     expect(
       latest.downloadFor(UpdatePlatform.web).toString(),
-      'https://github.com/safin97/MarketBazaar/releases/download/v1.0.0.3/bazaar-pos-web.zip',
+      'https://github.com/safin97/Bazaar_POS/releases/download/v1.0.0.3/Bazaar_POS-web.zip',
     );
   });
 
   test('selects the platform package, never source archives or iOS IPAs', () {
     final latest = release();
     for (final (platform, file) in [
-      (UpdatePlatform.android, 'bazaar-pos-android.apk'),
-      (UpdatePlatform.macos, 'bazaar-pos-macos.zip'),
-      (UpdatePlatform.windows, 'bazaar-pos-windows.zip'),
-      (UpdatePlatform.web, 'bazaar-pos-web.zip'),
+      (UpdatePlatform.android, 'Bazaar_POS-android.apk'),
+      (UpdatePlatform.macos, 'Bazaar_POS-macos.zip'),
+      (UpdatePlatform.windows, 'Bazaar_POS-windows.zip'),
+      (UpdatePlatform.web, 'Bazaar_POS-web.zip'),
     ]) {
       expect(latest.downloadFor(platform)!.pathSegments.last, file);
     }
     expect(latest.downloadFor(UpdatePlatform.ios), isNull);
     expect(latest.downloadFor(UpdatePlatform.linux), isNull);
-    expect(latest.pageUrl.path, '/safin97/MarketBazaar/releases/tag/v1.0.2+3');
+    expect(latest.pageUrl.path, '/safin97/Bazaar_POS/releases/tag/v1.0.2+3');
   });
 
   test('recognizes the existing Mac release package only for macOS', () {
@@ -138,7 +138,7 @@ void main() {
         {
           'name': 'Bazaar.POS.app.zip',
           'state': 'uploaded',
-          'browser_download_url': 'https://github.com/safin97/MarketBazaar/releases/download/v1.0.0.3/Bazaar.POS.app.zip',
+          'browser_download_url': 'https://github.com/safin97/Bazaar_POS/releases/download/v1.0.0.3/Bazaar.POS.app.zip',
         },
       ],
     }, repository: githubRepository);
@@ -174,11 +174,11 @@ void main() {
 
   test('ignores downloads outside the exact repository and release', () {
     for (final url in [
-      'https://example.com/bazaar-pos-android.apk',
-      'http://github.com/safin97/MarketBazaar/releases/download/v1.0.2+3/bazaar-pos-android.apk',
-      'https://github.com/other/app/releases/download/v1.0.2+3/bazaar-pos-android.apk',
-      'https://github.com/safin97/MarketBazaar/releases/download/v1.0.1/bazaar-pos-android.apk',
-      'https://github.com/safin97/MarketBazaar/releases/download/v1.0.2+3/bazaar-pos-android.apk?redirect=bad',
+      'https://example.com/Bazaar_POS-android.apk',
+      'http://github.com/safin97/Bazaar_POS/releases/download/v1.0.2+3/Bazaar_POS-android.apk',
+      'https://github.com/other/app/releases/download/v1.0.2+3/Bazaar_POS-android.apk',
+      'https://github.com/safin97/Bazaar_POS/releases/download/v1.0.1/Bazaar_POS-android.apk',
+      'https://github.com/safin97/Bazaar_POS/releases/download/v1.0.2+3/Bazaar_POS-android.apk?redirect=bad',
       'javascript:alert(1)',
     ]) {
       final json = releaseJson();
@@ -200,7 +200,7 @@ void main() {
         expect(request.method, 'GET');
         expect(
           request.url.toString(),
-          'https://api.github.com/repos/safin97/MarketBazaar/releases/latest',
+          'https://api.github.com/repos/safin97/Bazaar_POS/releases/latest',
         );
         expect(request.headers['Accept'], 'application/vnd.github+json');
         expect(request.headers.containsKey('Authorization'), isFalse);

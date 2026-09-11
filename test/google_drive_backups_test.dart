@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:bazaar_pos/core/backups/google_drive_backups.dart';
+import 'package:Bazaar_POS/core/backups/google_drive_backups.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';

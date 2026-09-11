@@ -36,7 +36,9 @@ class _WebInstaller extends UpdateInstaller {
       final data = jsonDecode(value.toDart) as Map<String, dynamic>;
       final stage = data['stage'];
       if (!const {'updateDownloading', 'updateVerifying', 'updateInstalling',
-          'updateRestarting'}.contains(stage)) return;
+          'updateRestarting'}.contains(stage)) {
+        return;
+      }
       onProgress(InstallProgress(stage as String,
           (data['progress'] as num?)?.toDouble().clamp(0, 1)));
     }).toJS;

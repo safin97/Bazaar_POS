@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:bazaar_pos/core/strings.dart';
-import 'package:bazaar_pos/core/theme.dart';
-import 'package:bazaar_pos/core/updates/github_updates.dart';
-import 'package:bazaar_pos/data/pos_store.dart';
-import 'package:bazaar_pos/screens/panel_settings_screen.dart';
+import 'package:Bazaar_POS/core/strings.dart';
+import 'package:Bazaar_POS/core/theme.dart';
+import 'package:Bazaar_POS/core/updates/github_updates.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
+import 'package:Bazaar_POS/screens/panel_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -123,7 +123,7 @@ void main() {
     await tapKey(tester, 'download-github-update');
     expect(
       updates.opened.toString(),
-      'https://github.com/safin97/MarketBazaar/releases/download/v1.0.1.3/bazaar-pos-android.apk',
+      'https://github.com/safin97/Bazaar_POS/releases/download/v1.0.1.3/Bazaar_POS-android.apk',
     );
   });
 

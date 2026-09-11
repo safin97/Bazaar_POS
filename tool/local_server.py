@@ -51,10 +51,10 @@ def validate_release(release, repository, tag, current):
     if version_tuple(tag) <= version_tuple(current):
         raise UpdateError('updateNotNewer')
     for asset in release.get('assets', []):
-        if asset.get('name') != 'bazaar-pos-web.zip' or asset.get('state') != 'uploaded':
+        if asset.get('name') != 'Bazaar_POS-web.zip' or asset.get('state') != 'uploaded':
             continue
         expected = 'https://github.com/' + repository + '/releases/download/'
-        expected += urllib.parse.quote(tag, safe='+.') + '/bazaar-pos-web.zip'
+        expected += urllib.parse.quote(tag, safe='+.') + '/Bazaar_POS-web.zip'
         if asset.get('browser_download_url') != expected:
             raise UpdateError('invalidGitHubRelease')
         digest = asset.get('digest')
@@ -149,7 +149,7 @@ class UpdateState:
             current = manifest['version'] + '+' + manifest['buildNumber']
             request = urllib.request.Request(
                 'https://api.github.com/repos/' + self.repository + '/releases/latest',
-                headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'Bazaar-POS-Updater'})
+                headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'Bazaar_POS-Updater'})
             with self.opener.open(request, timeout=20) as response:
                 raw = response.read(2 * 1024 * 1024 + 1)
                 if len(raw) > 2 * 1024 * 1024:
@@ -161,7 +161,7 @@ class UpdateState:
                 archive = temp / 'update.zip'
                 checksum = hashlib.sha256()
                 downloaded = 0
-                request = urllib.request.Request(url, headers={'User-Agent': 'Bazaar-POS-Updater'})
+                request = urllib.request.Request(url, headers={'User-Agent': 'Bazaar_POS-Updater'})
                 with self.opener.open(request, timeout=30) as response, archive.open('xb') as output:
                     if response.status != 200:
                         raise UpdateError('updateInstallFailed')
@@ -274,7 +274,7 @@ class LocalHandler(SimpleHTTPRequestHandler):
             self.json_response(400, {'error': key})
 
 
-def create_server(root, port=8080, repository='safin97/MarketBazaar'):
+def create_server(root, port=8080, repository='safin97/Bazaar_POS'):
     root = Path(root).resolve()
     previous = root.with_name(root.name + '.previous')
     # Recover if the process stopped between the two directory renames.
@@ -291,10 +291,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8080)
     parser.add_argument('--directory', type=Path, default=Path(__file__).resolve().parents[1] / 'build/web')
-    parser.add_argument('--repository', default='safin97/MarketBazaar')
+    parser.add_argument('--repository', default='safin97/Bazaar_POS')
     options = parser.parse_args()
     with create_server(options.directory, options.port, options.repository) as server:
-        print('Bazaar POS: http://localhost:' + str(server.server_port), flush=True)
+        print('Bazaar_POS: http://localhost:' + str(server.server_port), flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

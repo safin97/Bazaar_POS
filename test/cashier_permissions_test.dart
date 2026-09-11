@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:bazaar_pos/data/models.dart';
-import 'package:bazaar_pos/data/pos_store.dart';
+import 'package:Bazaar_POS/data/models.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 

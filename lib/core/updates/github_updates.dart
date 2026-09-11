@@ -10,7 +10,7 @@ import 'app_updates.dart';
 
 const githubRepository = String.fromEnvironment(
   'GITHUB_REPOSITORY',
-  defaultValue: 'safin97/MarketBazaar',
+  defaultValue: 'safin97/Bazaar_POS',
 );
 
 enum UpdatePlatform { android, ios, macos, windows, linux, web, unsupported }
@@ -115,22 +115,22 @@ class GitHubRelease {
 
   Uri? downloadFor(UpdatePlatform platform) {
     final names = switch (platform) {
-      UpdatePlatform.android => ['bazaar-pos-android.apk'],
+      UpdatePlatform.android => ['Bazaar_POS-android.apk'],
       UpdatePlatform.macos => [
-        'bazaar-pos-macos.dmg',
-        'bazaar-pos-macos.zip',
+        'Bazaar_POS-macos.dmg',
+        'Bazaar_POS-macos.zip',
         'Bazaar.POS.app.zip',
       ],
       UpdatePlatform.windows => [
-        'bazaar-pos-windows.exe',
-        'bazaar-pos-windows.msix',
-        'bazaar-pos-windows.zip',
+        'Bazaar_POS-windows.exe',
+        'Bazaar_POS-windows.msix',
+        'Bazaar_POS-windows.zip',
       ],
       UpdatePlatform.linux => [
-        'bazaar-pos-linux.AppImage',
-        'bazaar-pos-linux.tar.gz',
+        'Bazaar_POS-linux.AppImage',
+        'Bazaar_POS-linux.tar.gz',
       ],
-      UpdatePlatform.web => ['bazaar-pos-web.zip'],
+      UpdatePlatform.web => ['Bazaar_POS-web.zip'],
       UpdatePlatform.ios || UpdatePlatform.unsupported => <String>[],
     };
     for (final name in names) {

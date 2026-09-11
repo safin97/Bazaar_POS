@@ -32,9 +32,9 @@ def bundle_bytes(extra=None):
 
 def release(archive):
     return {'tag_name': 'v2.0.0+5', 'draft': False, 'prerelease': False, 'assets': [{
-        'name': 'bazaar-pos-web.zip', 'state': 'uploaded', 'size': len(archive),
+        'name': 'Bazaar_POS-web.zip', 'state': 'uploaded', 'size': len(archive),
         'digest': 'sha256:' + hashlib.sha256(archive).hexdigest(),
-        'browser_download_url': 'https://github.com/safin97/MarketBazaar/releases/download/v2.0.0+5/bazaar-pos-web.zip',
+        'browser_download_url': 'https://github.com/safin97/Bazaar_POS/releases/download/v2.0.0+5/Bazaar_POS-web.zip',
     }]}
 
 
@@ -66,7 +66,7 @@ class LocalUpdateTests(unittest.TestCase):
         self.database.write_bytes(b'preserve market data')
 
     def install(self, archive, metadata=None):
-        state = UpdateState(self.root, 'safin97/MarketBazaar')
+        state = UpdateState(self.root, 'safin97/Bazaar_POS')
         state.job = {'state': 'running'}
         state.opener = FakeOpener(metadata or release(archive), archive)
         state.install('v2.0.0+5')
@@ -92,14 +92,14 @@ class LocalUpdateTests(unittest.TestCase):
         archive = bundle_bytes()
         for current in ('2.0.0+5', '3.0.0+1'):
             with self.assertRaises(UpdateError):
-                validate_release(release(archive), 'safin97/MarketBazaar', 'v2.0.0+5', current)
+                validate_release(release(archive), 'safin97/Bazaar_POS', 'v2.0.0+5', current)
         metadata = release(archive)
         for change in ({'draft': True}, {'prerelease': True}, {'tag_name': 'v3.0.0'}):
             with self.assertRaises(UpdateError):
-                validate_release({**metadata, **change}, 'safin97/MarketBazaar', 'v2.0.0+5', '1.0.3+4')
+                validate_release({**metadata, **change}, 'safin97/Bazaar_POS', 'v2.0.0+5', '1.0.3+4')
         metadata['assets'][0]['browser_download_url'] = 'https://example.com/update.zip'
         with self.assertRaises(UpdateError):
-            validate_release(metadata, 'safin97/MarketBazaar', 'v2.0.0+5', '1.0.3+4')
+            validate_release(metadata, 'safin97/Bazaar_POS', 'v2.0.0+5', '1.0.3+4')
         self.assertEqual(version_tuple('v1.0.0.3'), (1, 0, 0, 3))
 
     def test_archive_traversal_and_wrong_app_version_never_activate(self):
@@ -135,7 +135,7 @@ class LocalUpdateTests(unittest.TestCase):
             return replace(source, target)
         with patch('local_server.os.replace', side_effect=fail_stage):
             with self.assertRaises(OSError):
-                UpdateState(self.root, 'safin97/MarketBazaar').activate(stage)
+                UpdateState(self.root, 'safin97/Bazaar_POS').activate(stage)
         self.assertEqual((self.root / 'index.html').read_text(), 'original')
 
     def test_http_requires_local_host_origin_and_token(self):

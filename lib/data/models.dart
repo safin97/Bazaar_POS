@@ -188,7 +188,7 @@ class Market {
 
 class StoreSettings {
   const StoreSettings({
-    this.name = 'Bazaar Market',
+    this.name = 'Market_Bazaar',
     this.tagline = 'Fresh goods. Better days.',
     this.address = '',
     this.phone = '',

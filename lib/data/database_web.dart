@@ -5,7 +5,7 @@ Future<CommonDatabase> openDatabase() async {
     Uri.base.resolve('sqlite3.wasm'),
   );
   sqlite.registerVirtualFileSystem(
-    await IndexedDbFileSystem.open(dbName: 'bazaar-pos-v1'),
+    await IndexedDbFileSystem.open(dbName: 'Bazaar_POS-v1'),
     makeDefault: true,
   );
   return sqlite.open('/bazaar.sqlite');

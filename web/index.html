@@ -7,15 +7,15 @@
   <meta name="theme-color" content="#287563">
   <meta name="description" content="Bazaar — your offline supermarket point of sale.">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Bazaar POS">
+  <meta name="apple-mobile-web-app-title" content="Bazaar_POS">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   <link rel="icon" type="image/png" href="favicon.png">
-  <title>Bazaar POS</title>
+  <title>Bazaar_POS</title>
   <link rel="manifest" href="manifest.json">
   <style>body{margin:0;background:#f7f8f5;color:#203a35;font:15px system-ui}#loading{display:grid;place-content:center;height:100vh;text-align:center;gap:12px}#loading strong{font-size:30px;letter-spacing:-1px}#loading span{color:#7a8580}</style>
 </head>
 <body>
-  <div id="loading"><strong>Bazaar POS</strong><span>Opening your store…</span></div>
+  <div id="loading"><strong>Bazaar_POS</strong><span>Opening your store…</span></div>
   <script src="app_updates.js"></script>
   <script src="install_updates.js"></script>
   <script src="drive_backups.js"></script>
@@ -28,7 +28,7 @@
       await new Promise(() => {});
     }
     if (navigator.locks) {
-      navigator.locks.request('bazaar-pos-database', {ifAvailable: true}, async lock => {
+      navigator.locks.request('Bazaar_POS-database', {ifAvailable: true}, async lock => {
         if (lock) await start();
         else document.getElementById('loading').innerHTML = '<strong>Your store is already open</strong><span>Close the other Bazaar tab, then refresh this page.</span>';
       });

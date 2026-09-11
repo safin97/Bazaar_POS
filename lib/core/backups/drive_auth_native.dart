@@ -52,7 +52,7 @@ class _DesktopDriveAuth extends DriveAuth {
       request.response.headers.contentType = ContentType.text;
       request.response.headers.set('Cache-Control', 'no-store');
       request.response.write(
-        'Return to Bazaar POS to finish connecting Google Drive.',
+        'Return to Bazaar_POS to finish connecting Google Drive.',
       );
       await request.response.close();
       if (pending.isCompleted) return;

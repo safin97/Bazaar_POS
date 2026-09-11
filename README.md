@@ -1,4 +1,4 @@
-# Bazaar POS
+# Bazaar_POS
 
 A Flutter supermarket point of sale for **iOS, Android, macOS and Windows**, with an additional **localhost browser preview**. Each installation has independent offline data.
 
@@ -12,7 +12,7 @@ To build and start it again:
 ./tool/serve.sh
 ```
 
-In VS Code, select **Bazaar POS (localhost:8080)** in Run and Debug for a
+In VS Code, select **Bazaar_POS (localhost:8080)** in Run and Debug for a
 development session at the same address. Stop the preview server before using
 that launch configuration so port 8080 is available.
 
@@ -125,7 +125,7 @@ Tests cover login-only UI, administrator provisioning, one-time account migratio
 
 ## Data and operating boundaries
 
-Native data is stored in `bazaar_pos.sqlite` in the platform application-support directory. SQLite commits the stock updates, receipt and audit record in one transaction. Money uses integer hundredths, and tax rounds once on the discounted order subtotal. Quantities are **whole packs/units**; weighted quantities and scales are not implemented. Currency is fixed once inventory or sales exist so reports never mix denominations. Initial sample prices are illustrative.
+Native data is stored in `Bazaar_POS.sqlite` in the platform application-support directory. SQLite commits the stock updates, receipt and audit record in one transaction. Money uses integer hundredths, and tax rounds once on the discounted order subtotal. Quantities are **whole packs/units**; weighted quantities and scales are not implemented. Currency is fixed once inventory or sales exist so reports never mix denominations. Initial sample prices are illustrative.
 
 The data layer lives in `lib/data/pos_store.dart`; platform storage adapters are in `lib/data/database_native.dart` and `database_web.dart`. Markets, categories, products, staff and sales have persistent market identifiers, and mutations validate the active market and role. Records have separate SQLite tables with JSON payloads. The UI keeps a local in-memory view of these tables; very large catalogs/ledgers would benefit from query pagination and background database work.
 
@@ -158,7 +158,7 @@ and desktop, after the app owner configures a Google OAuth client. See
 ## GitHub updates
 
 Open **Panel settings → App updates → Check GitHub for updates**. The app checks
-`safin97/MarketBazaar` for the latest published stable GitHub release, compares it
+`safin97/Bazaar_POS` for the latest published stable GitHub release, compares it
 with the running app version, and shows the release notes. **Download update**
 opens the matching package in the device's browser. Open the downloaded installer
 to finish updating; downloading alone does not replace the running app. Finish
@@ -194,18 +194,18 @@ To publish an update:
 
 | Device | Recognized GitHub release asset names, in preference order |
 | --- | --- |
-| Android | `bazaar-pos-android.apk` |
-| macOS | `bazaar-pos-macos.dmg`, `bazaar-pos-macos.zip`, `Bazaar.POS.app.zip` |
-| Windows | `bazaar-pos-windows.exe`, `bazaar-pos-windows.msix`, `bazaar-pos-windows.zip` |
-| Linux (if you add a Linux build target) | `bazaar-pos-linux.AppImage`, `bazaar-pos-linux.tar.gz` |
-| Browser | `bazaar-pos-web.zip` |
+| Android | `Bazaar_POS-android.apk` |
+| macOS | `Bazaar_POS-macos.dmg`, `Bazaar_POS-macos.zip`, `Bazaar.POS.app.zip` |
+| Windows | `Bazaar_POS-windows.exe`, `Bazaar_POS-windows.msix`, `Bazaar_POS-windows.zip` |
+| Linux (if you add a Linux build target) | `Bazaar_POS-linux.AppImage`, `Bazaar_POS-linux.tar.gz` |
+| Browser | `Bazaar_POS-web.zip` |
 | iOS | Release notes link to your signed App Store/TestFlight distribution |
 
 If there is no matching package, the app offers the release page and installation
 instructions. Source archives are not offered as app installers.
 
 For a web release, run `bash tool/build_web.sh` (also used by `tool/serve.sh`),
-then ZIP the **contents** of `build/web` as `bazaar-pos-web.zip`. The script embeds
+then ZIP the **contents** of `build/web` as `Bazaar_POS-web.zip`. The script embeds
 a build ID and includes `app-update.json`. The store owner installs the downloaded
 web package on the existing server; **Check this server → Load update** then
 confirms a reload. A browser cannot replace the files on its host server. Keep

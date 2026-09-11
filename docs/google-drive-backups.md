@@ -26,11 +26,11 @@ See Google's [application-data folder guide](https://developers.google.com/works
 
 1. Open [Google Cloud Console](https://console.cloud.google.com/) with your Google
    account. Use the project selector at the top to create a project named
-   **Bazaar POS**, or select your existing app project.
+   **Bazaar_POS**, or select your existing app project.
 2. Open **APIs & Services → Library**, search for **Google Drive API**, open it
    and select **Enable**.
 3. Open **Google Auth Platform → Branding → Get started**. Set the app name to
-   **Bazaar POS**, choose your support email, select **External** to allow Gmail
+   **BBazaar_POS**, choose your support email, select **External** to allow Gmail
    accounts, and enter your contact email. Review Google's policy and finish
    creating the configuration if you agree.
 4. Under **Audience → Test users → Add users**, add your Gmail address and any
@@ -45,8 +45,8 @@ See Google's [application-data folder guide](https://developers.google.com/works
 
 | Version | Application type | Suggested client name | Authorized JavaScript origins |
 | --- | --- | --- | --- |
-| Mac | Desktop app | Bazaar POS Desktop | Not applicable |
-| Browser | Web application | Bazaar POS Web | `http://localhost` and `http://localhost:8080` |
+| Mac | Desktop app | Bazaar_POS Desktop | Not applicable |
+| Browser | Web application | Bazaar_POS Web | `http://localhost` and `http://localhost:8080` |
 
 These menu paths follow Google's [consent setup](https://developers.google.com/workspace/guides/configure-oauth-consent)
 and [client creation guide](https://developers.google.com/workspace/guides/create-credentials).

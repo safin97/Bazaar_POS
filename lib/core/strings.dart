@@ -207,9 +207,9 @@ final Map<String, List<String>> translations = {
     "کۆپی هاتە گەڕاندنەڤە",
   ],
   "invalidBackup": [
-    "This is not a valid Bazaar POS backup. No data was replaced.",
-    "هذا الملف ليس نسخة احتياطية صالحة لـ Bazaar POS. لم يتم استبدال أي بيانات.",
-    "ئەڤ فایلە کۆپیەکا دروست یا Bazaar POS نینە. چ داتا نەهاتە گوهۆڕین.",
+    "This is not a valid Bazaar_POS backup. No data was replaced.",
+    "هذا الملف ليس نسخة احتياطية صالحة لـ Bazaar_POS. لم يتم استبدال أي بيانات.",
+    "ئەڤ فایلە کۆپیەکا دروست یا Bazaar_POS نینە. چ داتا نەهاتە گوهۆڕین.",
   ],
   "backupTooLarge": [
     "Backups must be smaller than 100 MB.",
@@ -223,7 +223,7 @@ final Map<String, List<String>> translations = {
   ],
   "googleDrive": ["Google Drive", "Google Drive", "Google Drive"],
   "driveBackupHint": [
-    "Connect your Google account to store backups in Bazaar POS's private Drive folder. Restore recent backups here. Reconnect when the sign-in session expires.",
+    "Connect your Google account to store backups in Bazaar_POS's private Drive folder. Restore recent backups here. Reconnect when the sign-in session expires.",
     "اربط حساب Google لحفظ النسخ في مجلد التطبيق الخاص على Drive. استعد النسخ الحديثة من هنا. أعد الاتصال عند انتهاء جلسة تسجيل الدخول.",
     "هەژمارا Google گرێ بدە دا کۆپیان د فولدەرا تایبەت یا ئەپێ ل Drive پاشەکەوت بکەی. کۆپیێن نوی ژ ڤێرە بگەڕینەڤە. دەمێ دانیشتن ب دوماهیک هات دوبارە گرێ بدە.",
   ],

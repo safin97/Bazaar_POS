@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:bazaar_pos/data/pos_store.dart';
-import 'package:bazaar_pos/main.dart';
+import 'package:Bazaar_POS/data/pos_store.dart';
+import 'package:Bazaar_POS/main.dart';
 
 void main() {
   testWidgets('First run only offers username and password sign-in', (

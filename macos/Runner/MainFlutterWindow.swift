@@ -14,7 +14,7 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
     let channel = FlutterMethodChannel(
-      name: "bazaar_pos/app_updates",
+      name: "Bazaar_POS/app_updates",
       binaryMessenger: flutterViewController.engine.binaryMessenger)
     updateChannel = channel
     channel.setMethodCallHandler { [weak self] call, result in

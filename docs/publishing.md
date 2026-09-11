@@ -1,4 +1,4 @@
-# Put Bazaar POS online
+# Put Bazaar_POS online
 
 The browser app runs locally at `http://localhost:8080`. To open it from another
 device over the internet, publish the contents of `build/web` to an HTTPS static
@@ -13,10 +13,10 @@ are separate operations.
    **Workers & Pages → Create application**. Choose **Pages** and the direct
    upload / drag-and-drop option.
 3. Name the project and upload the `build/web` folder, or the prepared
-   `build/releases/bazaar-pos-web.zip`. `index.html` must be at the root of the
+   `build/releases/Bazaar_POS-web.zip`. `index.html` must be at the root of the
    uploaded content. Deploy it and use the HTTPS address Cloudflare provides.
 4. For future updates, rebuild and deploy to the same project and address. Open
-   **Panel settings → App updates → Check this server** in Bazaar POS, then
+   **Panel settings → App updates → Check this server** in Bazaar_POS, then
    load the new version after saving current work.
 
 See [Cloudflare's direct-upload instructions](https://developers.cloudflare.com/pages/get-started/direct-upload/).
@@ -42,7 +42,7 @@ with that client's ID. Follow [the OAuth setup guide](google-drive-backups.md).
 
 ## Make the GitHub update button work
 
-The updater reads published releases from `safin97/MarketBazaar`. A release must
+The updater reads published releases from `safin97/Bazaar_POS`. A release must
 be publicly accessible, published, and marked as a stable release. A source-code
 push on its own does not publish an app update.
 
@@ -50,7 +50,7 @@ push on its own does not publish an app update.
    development values in `lib/core/updates/app_updates.dart` in sync.
 2. Open the repository's **Releases → Draft a new release**. Use a tag matching
    the build, for example `v1.0.2+3` for app version `1.0.2+3`.
-3. Attach `bazaar-pos-web.zip` for browser distributions and the appropriate
+3. Attach `Bazaar_POS-web.zip` for browser distributions and the appropriate
    native package for desktop/mobile users, then publish the release. Accepted
    package names are listed in the [README](../README.md#github-updates).
 
