@@ -50,8 +50,10 @@ Open only one tab per browser profile. The browser preview holds an exclusive We
 
 1. Sign in as `safin97`, open **Markets**, and choose **Add market**. Enter its name, optionally upload its logo, and choose USD, IQD or EUR as its **Main currency**. For USD/IQD markets, optionally turn on **Display USD and IQD** and enter your rate as IQD for 1 USD.
 2. **Manage market** selects that market and opens **Settings**. Edit its logo, name, address, phone, receipt details and optional display rate, then save.
-3. Open **Team** and add an **Admin**, **Market owner** or **Cashier** account. When the super admin selects the **Admin** role for a new account, a **Market** dropdown lets them assign any existing market; owners and cashiers use the current market. Usernames are unique across this device so the login form stays username/password only.
+3. Open **Team** and add an **Admin**, **Market owner** or **Cashier** account. When the super admin selects the **Admin** role for a new account, a **Market** dropdown lets them assign any existing market; owners and cashiers use the current market. Under **Market logo & background**, optionally upload and preview a logo and background for that market. The images and account save together; leaving the images alone preserves existing branding. The super admin can also change or remove them when editing an admin. Usernames are unique across this device so the login form stays username/password only.
 4. Repeat for another market. Admins and staff are assigned to their market when created; they enter that market automatically at login. Only the super admin can switch markets or create another market.
+
+The welcome screen displays a market's logo and background when an active team member enters their username. Empty or unrecognized usernames and the super manager use the default app artwork. The title stays **Bazaar_POS**. Market logos also appear in navigation and receipts; background images are saved once per market and included in backups, without duplicating them into receipts.
 5. Each admin can use **Categories** to add/edit category names, photos and icons, and **Inventory** to add products and their photos/icons. A category containing products cannot be deleted until those products are reassigned or removed.
 
 Choose the main currency before adding inventory or making sales. It is fixed after that so existing prices and receipts are not reinterpreted. Optional USD/IQD display adds an approximate second price in the register and inventory, and a reference total at checkout and on receipts. Enter the exchange rate yourself; it is not downloaded automatically. Payments, change, stored prices, costs, reports and CSV exports use the main currency. Each receipt keeps the display rate used when it was issued, so changing a rate later does not change old receipts.
@@ -103,7 +105,7 @@ flutter build windows --release
 - **iOS/macOS:** install full Xcode and run its first-launch setup. Plugin builds may also need CocoaPods. iOS device distribution needs your Apple signing team and provisioning.
 - **Windows:** build on Windows with Visual Studio's Desktop development with C++ workload.
 - macOS sandbox entitlements include user-selected file access and printing.
-- Editable in-app branding changes the market navigation and receipts. The welcome screen keeps the Bazaar_POS app name and logo. OS launcher names/icons are build-time assets; changing those requires rebuilding the app.
+- Editable in-app branding changes the market navigation, receipts and welcome artwork. The welcome screen keeps the Bazaar_POS app name. OS launcher names/icons are build-time assets; changing those requires rebuilding the app.
 
 On the development Mac used to create this project, the Android SDK, full Xcode and CocoaPods were unavailable. Native binaries could not be verified there. The web release build and Flutter tests can be verified without these platform SDKs.
 
@@ -144,7 +146,7 @@ Badini translations are provided in `lib/core/strings.dart`; have a native Badin
 
 Product illustrations: Twemoji graphics by Twitter, Inc. and other contributors, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), from [Twemoji v16.0.1](https://github.com/jdecked/twemoji/tree/v16.0.1). The bundled images are unchanged; the full license is in `assets/products/LICENSE-GRAPHICS`.
 
-The default app logo and launcher icons use the colorful shopping cart image supplied by the store owner, originally named `vecteezy_colorful-shopping-cart-logo-with-green-yellow-and-red-stripes_46624660.jpg`. The bundled copy is `assets/branding/shop-logo.png`; native and web icon assets are resized from that same supplied artwork. The welcome screen always displays this app logo. After sign-in, a custom logo uploaded in Settings takes precedence for the market's screens and receipts.
+The default app logo and launcher icons use the colorful shopping cart image supplied by the store owner, originally named `vecteezy_colorful-shopping-cart-logo-with-green-yellow-and-red-stripes_46624660.jpg`. The bundled copy is `assets/branding/shop-logo.png`; native and web icon assets are resized from that same supplied artwork. The welcome screen uses this logo until a team member enters a username with custom market branding. After sign-in, a custom logo takes precedence for the market's screens and receipts.
 
 The welcome screen background uses the store owner's supplied `empty-cashier-work-place.jpg`, resized and bundled as `assets/branding/welcome-background.jpg` for offline use.
 
