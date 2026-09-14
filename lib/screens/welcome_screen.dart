@@ -36,6 +36,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
+  void _showAboutUs() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.tr('aboutUs')),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(defaultLogoAsset, width: 64, height: 64),
+            const SizedBox(height: 16),
+            Text('Bazaar_POS', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 12),
+            Text(context.tr('aboutPurposeValue')),
+            const SizedBox(height: 16),
+            const Text('Powered By: Safin Gulli'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.tr('close')),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Stack(
@@ -50,14 +79,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         SafeArea(
           child: Column(
             children: [
-              const Align(
+              Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-                  child: Material(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    child: LanguageMenu(),
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        child: TextButton.icon(
+                          key: const ValueKey('welcome-about-us'),
+                          onPressed: _showAboutUs,
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size(0, 44),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.info_outline_rounded,
+                            size: 18,
+                          ),
+                          label: Text(context.tr('aboutUs')),
+                        ),
+                      ),
+                      const Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        child: LanguageMenu(),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -86,7 +142,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  context.store.settings.name,
+                                  'Bazaar_POS',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.titleLarge,
                                 ),

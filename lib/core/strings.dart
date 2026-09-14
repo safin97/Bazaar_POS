@@ -149,7 +149,7 @@ final Map<String, List<String>> translations = {
     "رمز منتج مخصص",
     "هێمایێ تایبەت یێ بەرهەمی",
   ],
-  "aboutUs": ["About us", "من نحن", "دەربارەی مە"],
+  "aboutUs": ["About Us", "من نحن", "دەربارەی مە"],
   "aboutAppName": ["App name", "اسم التطبيق", "ناڤێ ئەپێ"],
   "aboutPurpose": ["What we do", "ماذا نقدم", "ئەو کارێ ئەم دکەین"],
   "aboutPurposeValue": [

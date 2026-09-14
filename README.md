@@ -19,7 +19,7 @@ that launch configuration so port 8080 is available.
 To make the app available at an internet address, follow the
 [website publishing and GitHub release guide](docs/publishing.md).
 
-The welcome screen shows only the store branding, language selector, and username/password sign-in form. Enter username **`safin97`** and the password supplied by the store owner, then select **Sign in**. This account has **super manager** access. The password is not printed in this README or stored as plaintext in the app.
+The welcome screen shows the Bazaar_POS branding, language selector, an **About Us** button in the top corner, and the username/password sign-in form. Enter username **`safin97`** and the password supplied by the store owner, then select **Sign in**. This account has **super manager** access. The password is not printed in this README or stored as plaintext in the app.
 
 A one-time migration provisions this account for both fresh installations and existing local databases. Existing inventory, sales, branding and other staff accounts are retained. Subsequent starts respect account edits and password changes rather than resetting them. New installations include editable sample inventory with no fabricated sales. Store details and team accounts are managed after signing in.
 
@@ -103,7 +103,7 @@ flutter build windows --release
 - **iOS/macOS:** install full Xcode and run its first-launch setup. Plugin builds may also need CocoaPods. iOS device distribution needs your Apple signing team and provisioning.
 - **Windows:** build on Windows with Visual Studio's Desktop development with C++ workload.
 - macOS sandbox entitlements include user-selected file access and printing.
-- Editable in-app branding changes the welcome screen, navigation and receipts. OS launcher names/icons are build-time assets; changing those requires rebuilding the app.
+- Editable in-app branding changes the market navigation and receipts. The welcome screen keeps the Bazaar_POS app name and logo. OS launcher names/icons are build-time assets; changing those requires rebuilding the app.
 
 On the development Mac used to create this project, the Android SDK, full Xcode and CocoaPods were unavailable. Native binaries could not be verified there. The web release build and Flutter tests can be verified without these platform SDKs.
 
