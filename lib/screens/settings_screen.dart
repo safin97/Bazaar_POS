@@ -77,6 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     receiptFooter: _c['footer']!.text.trim(),
     showCashier: _showCashier,
     logo: _logo,
+    background: context.store.settings.background,
     receiptWidth: _width,
   );
   Future<void> _pickLogo() async {

@@ -13,9 +13,11 @@ class AssignmentStore extends PosStore {
   String? assignedMarketId;
   UserRole? assignedRole;
   Set<CashierPermission>? assignedPermissions;
+  MarketBranding? assignedBranding;
   @override
   Future<void> saveUser({
     Set<CashierPermission>? extraPermissions,
+    MarketBranding? marketBranding,
     String? id,
     String? marketId,
     required String name,
@@ -27,6 +29,7 @@ class AssignmentStore extends PosStore {
     assignedMarketId = marketId;
     assignedRole = role;
     assignedPermissions = extraPermissions;
+    assignedBranding = marketBranding;
   }
 }
 

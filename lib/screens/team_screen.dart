@@ -4,6 +4,7 @@ import '../core/strings.dart';
 import '../core/theme.dart';
 import '../data/models.dart';
 import '../widgets/common.dart';
+import '../widgets/market_branding_editor.dart';
 
 const _teamRoles = [UserRole.cashier, UserRole.admin, UserRole.marketOwner];
 
@@ -211,7 +212,9 @@ class _UserEditorState extends State<_UserEditor> {
   late UserRole _role;
   late bool _active;
   bool _busy = false;
+  bool _picking = false;
   String? _marketId;
+  final Map<String, MarketBranding> _brandingDrafts = {};
   late final Set<CashierPermission> _extraPermissions;
   @override
   void initState() {
@@ -232,12 +235,17 @@ class _UserEditorState extends State<_UserEditor> {
   }
 
   Future<void> _save() async {
-    if (!_form.currentState!.validate()) return;
+    if (_busy || _picking || !_form.currentState!.validate()) return;
     final store = context.store;
     setState(() => _busy = true);
     try {
       await store.saveUser(
         id: widget.user?.id,
+        marketBranding: store.isOwner && _role == UserRole.admin
+            ? _brandingDrafts[widget.user?.marketId ??
+                  _marketId ??
+                  store.activeMarketId]
+            : null,
         marketId:
             widget.user == null && store.isOwner && _role == UserRole.admin
             ? _marketId ?? store.activeMarketId
@@ -263,12 +271,16 @@ class _UserEditorState extends State<_UserEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final self = widget.user?.id == context.store.currentUser!.id;
+    final store = context.store;
+    final self = widget.user?.id == store.currentUser!.id;
+    final blocked = _busy || _picking;
+    final brandingMarketId =
+        widget.user?.marketId ?? _marketId ?? store.activeMarketId;
     return PopScope(
-      canPop: !_busy,
+      canPop: !blocked,
       child: FormDialog(
         title: widget.user == null ? 'addUser' : 'editUser',
-        busy: _busy,
+        busy: blocked,
         onSave: _save,
         child: Form(
           key: _form,
@@ -299,7 +311,9 @@ class _UserEditorState extends State<_UserEditor> {
                       ),
                     )
                     .toList(),
-                onChanged: self ? null : (v) => setState(() => _role = v!),
+                onChanged: self || blocked
+                    ? null
+                    : (v) => setState(() => _role = v!),
               ),
               const SizedBox(height: 12),
               if (_role == UserRole.cashier) ...[
@@ -364,9 +378,25 @@ class _UserEditorState extends State<_UserEditor> {
                         ),
                       )
                       .toList(),
-                  onChanged: _busy
+                  onChanged: blocked
                       ? null
                       : (id) => setState(() => _marketId = id),
+                ),
+                const SizedBox(height: 16),
+              ],
+              if (store.isOwner && _role == UserRole.admin) ...[
+                MarketBrandingEditor(
+                  key: ValueKey('admin-branding-$brandingMarketId'),
+                  branding:
+                      _brandingDrafts[brandingMarketId] ??
+                      store.markets
+                          .firstWhere((m) => m.id == brandingMarketId)
+                          .settings
+                          .branding,
+                  enabled: !_busy,
+                  onChanged: (value) =>
+                      setState(() => _brandingDrafts[brandingMarketId] = value),
+                  onBusyChanged: (value) => setState(() => _picking = value),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -382,7 +412,9 @@ class _UserEditorState extends State<_UserEditor> {
                   style: const TextStyle(fontSize: 13),
                 ),
                 value: _active,
-                onChanged: self ? null : (v) => setState(() => _active = v),
+                onChanged: self || blocked
+                    ? null
+                    : (v) => setState(() => _active = v),
               ),
             ],
           ),

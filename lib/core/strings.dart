@@ -115,6 +115,16 @@ final Map<String, List<String>> translations = {
     "سيدخل هذا المدير إلى المتجر المحدد. يمكنك إنشاء المتاجر من صفحة المتاجر.",
     "ئەڤ بەڕێڤەبەرە دێ بچیتە مارکێتا هەلبژارتی. ل پەڕا مارکێتان مارکێتەکێ دروست بکە.",
   ],
+  "adminBranding": ["Market logo & background", "شعار المتجر والخلفية", "لۆگۆ و پاشبنەمایێ مارکێتێ"],
+  "adminBrandingHint": [
+    "Optional. These images belong to the selected market. Its welcome screen uses them when a team member enters their username. The logo also appears inside the market and on receipts.",
+    "اختياري. تخص هذه الصور المتجر المحدد وتظهر في شاشة الترحيب عند إدخال اسم مستخدم أحد موظفيه. يظهر الشعار أيضًا داخل المتجر وعلى الإيصالات.",
+    "هەلبژارتییە. ئەڤ وێنە بۆ مارکێتا هەلبژارتی نە. دەمێ کارمەند ناڤێ بەکارهێنەری بنڤیسیت ل پەڕا بخێرهاتنێ دیار دبن. لۆگۆ د ناڤ مارکێتێ و ل سەر پسوولان ژی دیار دبیت.",
+  ],
+  "background": ["Background", "الخلفية", "پاشبنەما"],
+  "logo": ["Logo", "الشعار", "لۆگۆ"],
+  "uploadBackground": ["Upload background", "رفع خلفية", "بارکرنا پاشبنەمایی"],
+  "removeBackground": ["Remove background", "إزالة الخلفية", "ژێبرنا پاشبنەمایی"],
   "categories": ["Categories", "الأقسام", "بەش"],
   "categoriesSubtitle": [
     "Organize items with names, photos and icons.",

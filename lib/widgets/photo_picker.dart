@@ -31,7 +31,7 @@ const productIconChoices = [
 ];
 
 /// Stores a small, self-contained image so products work without a connection.
-Future<String?> pickItemPhoto() async {
+Future<String?> pickItemPhoto({int maxDimension = 512}) async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowedExtensions: ['png', 'jpg', 'jpeg', 'webp'],
@@ -53,24 +53,31 @@ Future<String?> pickItemPhoto() async {
   try {
     buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
     descriptor = await ui.ImageDescriptor.encoded(buffer);
-    final scale = math.min(
+    var scale = math.min(
       1.0,
-      512 / math.max(descriptor.width, descriptor.height),
+      maxDimension / math.max(descriptor.width, descriptor.height),
     );
-    codec = await descriptor.instantiateCodec(
-      targetWidth: math.max(1, (descriptor.width * scale).round()),
-      targetHeight: math.max(1, (descriptor.height * scale).round()),
-    );
-    image = (await codec.getNextFrame()).image;
-    final png = await image.toByteData(format: ui.ImageByteFormat.png);
-    if (png == null) throw const PosException('invalidPhoto');
-    final encoded = base64Encode(
-      png.buffer.asUint8List(png.offsetInBytes, png.lengthInBytes),
-    );
-    if (encoded.length > 2 * 1024 * 1024) {
-      throw const PosException('photoTooLarge');
+    while (true) {
+      codec = await descriptor.instantiateCodec(
+        targetWidth: math.max(1, (descriptor.width * scale).round()),
+        targetHeight: math.max(1, (descriptor.height * scale).round()),
+      );
+      image = (await codec.getNextFrame()).image;
+      final png = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (png == null) throw const PosException('invalidPhoto');
+      final encoded = base64Encode(
+        png.buffer.asUint8List(png.offsetInBytes, png.lengthInBytes),
+      );
+      if (encoded.length <= 2 * 1024 * 1024) return encoded;
+      if (math.max(image.width, image.height) <= 512) {
+        throw const PosException('photoTooLarge');
+      }
+      image.dispose();
+      image = null;
+      codec.dispose();
+      codec = null;
+      scale *= 0.75;
     }
-    return encoded;
   } on PosException {
     rethrow;
   } catch (_) {

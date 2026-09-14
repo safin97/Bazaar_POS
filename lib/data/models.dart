@@ -198,6 +198,7 @@ class StoreSettings {
     this.receiptHeader = '',
     this.receiptFooter = 'Thank you for shopping with us!',
     this.logo,
+    this.background,
     this.showCashier = true,
     this.receiptWidth = 80,
   });
@@ -209,6 +210,7 @@ class StoreSettings {
       receiptHeader,
       receiptFooter;
   final int taxBasisPoints, receiptWidth;
+
   /// Display-only rate: IQD hundredths for 1 USD (131000 means 1 USD = 1310 IQD).
   /// Null keeps the market in single-currency display mode.
   final int? usdToIqdRate;
@@ -227,15 +229,19 @@ class StoreSettings {
     // Use integer arithmetic on native and web; round the displayed total once.
     final rate = BigInt.from(usdToIqdRate!);
     final hundred = BigInt.from(100);
-    final numerator = BigInt.from(amount).abs() *
-        (currency == 'USD' ? rate : hundred);
+    final numerator =
+        BigInt.from(amount).abs() * (currency == 'USD' ? rate : hundred);
     final denominator = currency == 'USD' ? hundred : rate;
     final rounded = (numerator + denominator ~/ BigInt.two) ~/ denominator;
     return (amount < 0 ? -rounded : rounded).toInt();
   }
+
   final bool showCashier;
   final String? logo;
+  final String? background;
   Uint8List? get logoBytes => logo == null ? null : base64Decode(logo!);
+  MarketBranding get branding =>
+      MarketBranding(logo: logo, background: background);
   Map<String, dynamic> toJson() => {
     'name': name,
     'tagline': tagline,
@@ -247,6 +253,7 @@ class StoreSettings {
     'receiptHeader': receiptHeader,
     'receiptFooter': receiptFooter,
     'logo': logo,
+    'background': background,
     'showCashier': showCashier,
     'receiptWidth': receiptWidth,
   };
@@ -261,9 +268,19 @@ class StoreSettings {
     receiptHeader: j['receiptHeader'],
     receiptFooter: j['receiptFooter'],
     logo: j['logo'],
+    background: j['background'],
     showCashier: j['showCashier'],
     receiptWidth: j['receiptWidth'] ?? 80,
   );
+}
+
+class MarketBranding {
+  const MarketBranding({this.logo, this.background});
+
+  final String? logo, background;
+  Uint8List? get logoBytes => logo == null ? null : base64Decode(logo!);
+  Uint8List? get backgroundBytes =>
+      background == null ? null : base64Decode(background!);
 }
 
 class SaleLine {

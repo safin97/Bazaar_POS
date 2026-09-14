@@ -98,6 +98,22 @@ class PosStore extends ChangeNotifier {
     ),
   );
   bool get needsSetup => _users.isEmpty;
+  // Only public artwork is needed to personalize the username/password screen.
+  MarketBranding welcomeBrandingForUsername(String username) {
+    final user = _users
+        .where((u) => u.active && u.username == username.trim().toLowerCase())
+        .firstOrNull;
+    if (user == null || user.role == UserRole.superManager) {
+      return const MarketBranding();
+    }
+    return _markets
+            .where((m) => m.id == user.marketId)
+            .firstOrNull
+            ?.settings
+            .branding ??
+        const MarketBranding();
+  }
+
   bool get isManager =>
       currentUser != null &&
       [UserRole.admin, UserRole.superManager].contains(currentUser!.role);
@@ -532,6 +548,7 @@ class PosStore extends ChangeNotifier {
 
   Future<void> saveUser({
     Set<CashierPermission>? extraPermissions,
+    MarketBranding? marketBranding,
     String? id,
     String? marketId,
     required String name,
@@ -552,6 +569,9 @@ class PosStore extends ChangeNotifier {
     );
     void check() {
       _require(manager: true);
+      if (marketBranding != null && (!isOwner || role != UserRole.admin)) {
+        throw const PosException('permissionDenied');
+      }
       if (!_markets.any((market) => market.id == assignedMarketId)) {
         throw const PosException('invalidMarket');
       }
@@ -581,6 +601,10 @@ class PosStore extends ChangeNotifier {
     }
 
     check();
+    if (marketBranding != null) {
+      _validatePhoto(marketBranding.logo);
+      _validatePhoto(marketBranding.background);
+    }
     final user = await _makeUser(
       id ?? newId(),
       name,
@@ -593,11 +617,22 @@ class PosStore extends ChangeNotifier {
       extraPermissions: assignedPermissions,
     );
     check();
-    _transaction(
-      previous == null ? 'userAdded' : 'userUpdated',
-      user.name,
-      () => _put('users', user.id, user.toJson()),
-    );
+    _transaction(previous == null ? 'userAdded' : 'userUpdated', user.name, () {
+      _put('users', user.id, user.toJson());
+      if (marketBranding != null) {
+        final market = _markets.firstWhere((m) => m.id == assignedMarketId);
+        final updated = StoreSettings.fromJson({
+          ...market.settings.toJson(),
+          'logo': marketBranding.logo,
+          'background': marketBranding.background,
+        });
+        _put(
+          'markets',
+          market.id,
+          Market(id: market.id, settings: updated).toJson(),
+        );
+      }
+    });
   }
 
   void deleteUser(String id) {
@@ -678,6 +713,7 @@ class PosStore extends ChangeNotifier {
       throw const PosException('invalidSettings');
     }
     // Currency is a denomination, not a conversion. Require an empty catalog/ledger to change it.
+    _validatePhoto(value.background);
     if (value.currency != settings.currency &&
         (products.isNotEmpty || sales.isNotEmpty)) {
       throw const PosException('currencyLocked');
@@ -747,7 +783,11 @@ class PosStore extends ChangeNotifier {
       tax: tax,
       paymentMethod: paymentMethod,
       tendered: paymentMethod == 'card' ? total : tendered,
-      settings: settings,
+      // Background artwork belongs to the app, not every receipt snapshot.
+      settings: StoreSettings.fromJson({
+        ...settings.toJson(),
+        'background': null,
+      }),
       language: language,
     );
     _transaction('saleCompleted', sale.number, () {
@@ -927,6 +967,7 @@ class PosStore extends ChangeNotifier {
           throw const FormatException();
         }
         _validatePhoto(settings.logo);
+        _validatePhoto(settings.background);
       }
 
       for (final market in markets) {
